@@ -32,11 +32,6 @@ export const STATION_SELECT_FIELDS = Object.keys(
   stationRecordSchema.shape,
 ).join(",");
 
-export const stationsResponseSchema = z.object({
-  total_count: z.number(),
-  results: z.array(z.unknown()),
-});
-
 type StationRecord = z.infer<typeof stationRecordSchema>;
 
 const readFuelPrice = (

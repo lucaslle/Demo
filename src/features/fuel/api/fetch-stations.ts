@@ -5,11 +5,9 @@ import type { Station } from "../model/station";
 import {
   parseStationRecords,
   STATION_SELECT_FIELDS,
-  stationsResponseSchema,
 } from "../schemas/station-record";
-
-const RECORDS_URL =
-  "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/prix-des-carburants-en-france-flux-instantane-v2/records";
+import { recordsResponseSchema } from "../schemas/records-response";
+import { FUEL_PRICES_RECORDS_URL } from "./endpoints";
 
 // L'API plafonne `limit` à 100 par requête.
 export const PAGE_SIZE = 100;
@@ -37,7 +35,7 @@ const buildPageUrl = (area: Bounds, fuel: FuelType, offset: number): string => {
     limit: String(PAGE_SIZE),
     offset: String(offset),
   });
-  return `${RECORDS_URL}?${params.toString()}`;
+  return `${FUEL_PRICES_RECORDS_URL}?${params.toString()}`;
 };
 
 // Les stations sont triées par prix croissant : si la zone en contient plus que
@@ -48,7 +46,7 @@ export const fetchStationsInArea = async ({
   signal,
 }: FetchStationsParams): Promise<StationsResult> => {
   const fetchPage = (offset: number) =>
-    fetchJson(buildPageUrl(area, fuel, offset), stationsResponseSchema, {
+    fetchJson(buildPageUrl(area, fuel, offset), recordsResponseSchema, {
       signal,
     });
 
