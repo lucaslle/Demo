@@ -37,6 +37,11 @@
   --scale-4: #d9560f;
   --scale-5: #c0262d;
 
+  /* Recharge électrique : charge normale, rapide, ultra-rapide. */
+  --ev-1: #0369a1;
+  --ev-2: #4338ca;
+  --ev-3: #a21caf;
+
   --glow: 0 0 0 5px rgb(160 210 30 / 0.22), 0 0 22px rgb(160 210 30 / 0.45);
 
   --radius-sm: 0.5rem;
@@ -84,6 +89,11 @@
     --scale-4: #ff8a3d;
     --scale-5: #ff4d5e;
 
+    /* Recharge électrique : charge normale, rapide, ultra-rapide. */
+    --ev-1: #7dd3fc;
+    --ev-2: #a5b4fc;
+    --ev-3: #f0abfc;
+
     --glow: 0 0 0 6px rgb(200 245 69 / 0.16), 0 0 26px rgb(200 245 69 / 0.55);
 
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
@@ -124,6 +134,11 @@
   --scale-3: #ffc83d;
   --scale-4: #ff8a3d;
   --scale-5: #ff4d5e;
+
+  /* Recharge électrique : charge normale, rapide, ultra-rapide. */
+  --ev-1: #7dd3fc;
+  --ev-2: #a5b4fc;
+  --ev-3: #f0abfc;
 
   --glow: 0 0 0 6px rgb(200 245 69 / 0.16), 0 0 26px rgb(200 245 69 / 0.55);
 

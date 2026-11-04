@@ -19,7 +19,7 @@ import { FUEL_LABELS, type FuelType } from "../model/fuel-types";
 import { summarizePrices } from "../model/price-summary";
 import type { Viewport } from "@/features/map/model/viewport";
 import { BestPriceCard } from "./best-price-card";
-import styles from "./fuel-explorer.module.css";
+import styles from "@/features/map/components/explorer-layout.module.css";
 import { FuelChips } from "./fuel-chips";
 import { ListSkeleton } from "./list-skeleton";
 import { PriceDistribution } from "./price-distribution";
@@ -201,7 +201,7 @@ export const FuelExplorer = () => {
       >
         <h2 id="titre-liste-stations" className={styles.listTitle}>
           Stations dans la zone
-          <span className={styles.listFuel}>{FUEL_LABELS[fuel]}</span>
+          <span className={styles.listTag}>{FUEL_LABELS[fuel]}</span>
         </h2>
 
         {isTruncated && !hasError && (

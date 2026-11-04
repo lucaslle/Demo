@@ -4,7 +4,7 @@ import {
   parseDepartmentRecords,
   type DepartmentPrices,
 } from "../schemas/department-prices";
-import { recordsResponseSchema } from "../schemas/records-response";
+import { recordsResponseSchema } from "@/shared/api/records-response";
 import { FUEL_PRICES_RECORDS_URL } from "./endpoints";
 
 // La France compte moins de 110 départements : une seule page suffit.

@@ -1,0 +1,74 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+  width: 100%;
+  padding: 0.75rem;
+  text-align: left;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.item:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+.item[aria-current="true"] {
+  border-color: var(--ev-2);
+  box-shadow: 0 0 0 1px var(--ev-2);
+}
+
+.rank {
+  padding-top: 0.25rem;
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.body {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.points {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.name {
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.address {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}

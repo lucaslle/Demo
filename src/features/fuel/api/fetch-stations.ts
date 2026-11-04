@@ -6,7 +6,7 @@ import {
   parseStationRecords,
   STATION_SELECT_FIELDS,
 } from "../schemas/station-record";
-import { recordsResponseSchema } from "../schemas/records-response";
+import { recordsResponseSchema } from "@/shared/api/records-response";
 import { FUEL_PRICES_RECORDS_URL } from "./endpoints";
 
 // L'API plafonne `limit` à 100 par requête.
