@@ -1,0 +1,74 @@
+.picker {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary strong {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+.body {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  padding: 0 0.875rem 0.875rem;
+}
+
+.body > * {
+  width: 100%;
+}
+
+.body > button {
+  width: fit-content;
+}
+
+.field {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.field label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.field input {
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+}
+
+.field input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}

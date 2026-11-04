@@ -1,18 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { computeFullTankSavings, summarizePrices } from "./price-summary";
+import { computeTankCosts, summarizePrices } from "./price-summary";
 
-describe("computeFullTankSavings", () => {
-  it("multiplie l'écart à la moyenne par la contenance du réservoir", () => {
+describe("computeTankCosts", () => {
+  it("chiffre un plein dans la station la moins chère et la plus chère", () => {
     const summary = { lowest: 1.9, average: 1.98, highest: 2.1, spread: 0.2 };
 
-    expect(computeFullTankSavings(summary)).toBeCloseTo(4, 10);
-    expect(computeFullTankSavings(summary, 40)).toBeCloseTo(3.2, 10);
+    const costs = computeTankCosts(summary, 40);
+
+    expect(costs.cheapest).toBeCloseTo(76, 10);
+    expect(costs.priciest).toBeCloseTo(84, 10);
+    expect(costs.gap).toBeCloseTo(8, 10);
   });
 
-  it("ne donne aucune économie quand tous les prix sont identiques", () => {
+  it("ne donne aucun écart quand tous les prix sont identiques", () => {
     const summary = { lowest: 2, average: 2, highest: 2, spread: 0 };
 
-    expect(computeFullTankSavings(summary)).toBe(0);
+    expect(computeTankCosts(summary, 50).gap).toBe(0);
   });
 });
 

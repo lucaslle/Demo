@@ -24,9 +24,10 @@ import { FuelChips } from "./fuel-chips";
 import { ListSkeleton } from "./list-skeleton";
 import { PriceDistribution } from "./price-distribution";
 import { RouteCard } from "./route-card";
-import { SavingsCard } from "./savings-card";
+import { PriceGapCard } from "./price-gap-card";
 import { StationList } from "./station-list";
 import { StationMap } from "./station-map";
+import { VehiclePicker } from "./vehicle-picker";
 
 const VIEWPORT_DEBOUNCE_IN_MS = 300;
 
@@ -35,6 +36,8 @@ export const FuelExplorer = () => {
   const setPreferredFuel = usePreferencesStore(
     (state) => state.setPreferredFuel,
   );
+  const vehicle = usePreferencesStore((state) => state.vehicle);
+  const setVehicle = usePreferencesStore((state) => state.setVehicle);
   const [fuel, setFuel] = useState<FuelType>(initialState.fuel);
   const [viewport, setViewport] = useState<Viewport | null>(null);
   const [selectedStationId, setSelectedStationId] = useState<number | null>(
@@ -138,6 +141,7 @@ export const FuelExplorer = () => {
       <div className={styles.top}>
         <h1 className={styles.title}>Prix des carburants</h1>
         <FuelChips value={fuel} onChange={handleFuelChange} />
+        <VehiclePicker vehicle={vehicle} onChange={setVehicle} />
         {selectedStation !== undefined && selectedPrice !== undefined ? (
           <RouteCard
             station={selectedStation}
@@ -190,7 +194,7 @@ export const FuelExplorer = () => {
           routeState={routeState}
         />
         {priceSummary !== null && !hasError && (
-          <SavingsCard summary={priceSummary} />
+          <PriceGapCard summary={priceSummary} vehicle={vehicle} />
         )}
       </div>
 
