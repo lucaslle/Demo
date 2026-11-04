@@ -32,6 +32,12 @@
   --bad-soft: #fdeaea;
   --focus: #b45309;
 
+  --scale-1: #15803d;
+  --scale-2: #65a30d;
+  --scale-3: #eab308;
+  --scale-4: #ea580c;
+  --scale-5: #b91c1c;
+
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1.25rem;
@@ -75,6 +81,12 @@
     --bad-soft: #2f1717;
     --focus: #fbbf24;
 
+    --scale-1: #34d399;
+    --scale-2: #a3e635;
+    --scale-3: #facc15;
+    --scale-4: #fb923c;
+    --scale-5: #f87171;
+
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
     --shadow-md: 0 4px 14px rgb(0 0 0 / 0.45);
     --shadow-lg: 0 18px 44px rgb(0 0 0 / 0.55);
@@ -111,6 +123,12 @@
   --bad: #f87171;
   --bad-soft: #2f1717;
   --focus: #fbbf24;
+
+  --scale-1: #34d399;
+  --scale-2: #a3e635;
+  --scale-3: #facc15;
+  --scale-4: #fb923c;
+  --scale-5: #f87171;
 
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
   --shadow-md: 0 4px 14px rgb(0 0 0 / 0.45);

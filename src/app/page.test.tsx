@@ -1,10 +1,68 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, screen, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import HomePage from "./page";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/",
+}));
+
+const buildRecord = (code: string, e10: number, stations = 40) => ({
+  code_departement: code,
+  stations,
+  gazole: e10 + 0.2,
+  e10,
+  sp98: e10 + 0.1,
+  sp95: null,
+  e85: null,
+  gplc: null,
+  n_gazole: stations,
+  n_e10: stations,
+  n_sp98: stations,
+  n_sp95: 0,
+  n_e85: 0,
+  n_gplc: 0,
+  last_update: "2026-11-04T11:39:58+00:00",
+});
+
+const renderHome = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <HomePage />
+    </QueryClientProvider>,
+  );
+};
+
+beforeEach(() => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            total_count: 3,
+            results: [
+              buildRecord("15", 1.89),
+              buildRecord("75", 2.09),
+              buildRecord("13", 1.95),
+            ],
+          }),
+        ),
+    ),
+  );
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe("HomePage", () => {
   it("affiche le titre principal de l'application", () => {
-    render(<HomePage />);
+    renderHome();
 
     expect(
       screen.getByRole("heading", { level: 1, name: /autour de vous/ }),
@@ -12,17 +70,21 @@ describe("HomePage", () => {
   });
 
   it("expose la zone de contenu ciblée par le lien d'évitement", () => {
-    render(<HomePage />);
+    renderHome();
 
     expect(screen.getByRole("main")).toHaveAttribute("id", "contenu");
   });
 
   it("propose d'ouvrir la carte des carburants depuis le héros et la liste des thèmes", () => {
-    render(<HomePage />);
+    renderHome();
 
     const links = screen
       .getAllByRole("link")
-      .filter((link) => /carburants/i.test(link.textContent ?? ""));
+      .filter((link) =>
+        /^(Voir les prix des )?carburants$/i.test(
+          link.textContent?.trim() ?? "",
+        ),
+      );
 
     expect(links.length).toBeGreaterThanOrEqual(2);
     for (const link of links) {
@@ -31,7 +93,7 @@ describe("HomePage", () => {
   });
 
   it("présente les thèmes à venir sans les rendre cliquables", () => {
-    render(<HomePage />);
+    renderHome();
 
     expect(
       screen.queryByRole("link", { name: "Équipements sportifs" }),
@@ -40,11 +102,30 @@ describe("HomePage", () => {
   });
 
   it("hiérarchise les titres : un h1 puis des h2", () => {
-    render(<HomePage />);
+    renderHome();
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(
       screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent),
-    ).toEqual(["Les thèmes", "Sous le capot"]);
+    ).toEqual(["Prix moyen par département", "Les thèmes", "Sous le capot"]);
+  });
+
+  it("affiche les statistiques et les classements issus des données en direct", async () => {
+    renderHome();
+
+    const cheapest = await screen.findByRole("heading", {
+      name: "Les moins chers",
+    });
+    const list = cheapest.nextElementSibling as HTMLElement;
+
+    expect(within(list).getAllByRole("listitem")[0]).toHaveTextContent(/1,890/);
+    expect(screen.getByText("Stations suivies")).toBeInTheDocument();
+  });
+
+  it("garde la carte décorative masquée aux lecteurs d'écran", () => {
+    const { container } = renderHome();
+
+    const svg = container.querySelector("svg[viewBox]");
+    expect(svg).toHaveAttribute("aria-hidden", "true");
   });
 });

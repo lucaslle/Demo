@@ -1,0 +1,162 @@
+.card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.header {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 750;
+}
+
+.mapArea {
+  position: relative;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  max-height: 30rem;
+  height: auto;
+  overflow: visible;
+}
+
+.department {
+  stroke: var(--surface);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: fill 0.7s ease;
+}
+
+.department[data-loading="true"] {
+  animation: loading-pulse 1.6s ease-in-out infinite;
+}
+
+.hoverOutline {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+.readout {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: grid;
+  gap: 0.125rem;
+  max-width: 14rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+
+.readoutHint {
+  color: var(--text-muted);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.legendBar {
+  flex: 1;
+  height: 0.625rem;
+  background: linear-gradient(
+    90deg,
+    var(--scale-1),
+    var(--scale-2),
+    var(--scale-3),
+    var(--scale-4),
+    var(--scale-5)
+  );
+  border-radius: 999px;
+}
+
+.error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--bad);
+  background: var(--bad-soft);
+  border-radius: var(--radius-md);
+}
+
+.rankings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.rankingTitle {
+  margin-bottom: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.rankingList {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rankingList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.rankingList strong {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@keyframes loading-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 30rem) {
+  .rankings {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

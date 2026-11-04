@@ -10,9 +10,11 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
+import type { CSSProperties } from "react";
+import { FrancePriceMap } from "@/features/fuel/components/france-price-map";
+import { LiveStats } from "@/features/fuel/components/live-stats";
 import { SiteFooter } from "@/shared/components/site-footer";
 import { REPOSITORY_URL } from "@/shared/lib/site";
-import { HeroPreview } from "./hero-preview";
 import styles from "./page.module.css";
 
 type Highlight = {
@@ -73,26 +75,42 @@ const MODULES: Module[] = [
   },
 ];
 
+// Décale l'apparition de chaque élément du héros.
+const revealDelay = (delayInMs: number): CSSProperties =>
+  ({
+    "--delay": `${delayInMs}ms`,
+  }) as CSSProperties;
+
 const HomePage = () => (
   <>
     <main id="contenu">
       <section className={styles.hero}>
+        <div className={styles.aurora} aria-hidden="true" />
         <div className={`container ${styles.heroInner}`}>
           <div className={styles.heroText}>
-            <p className={styles.badge}>
+            <p className={`${styles.badge} ${styles.reveal}`}>
               <span className={styles.badgeDot} aria-hidden="true" />
               Données ouvertes, mises à jour en continu
             </p>
-            <h1 className={styles.title}>
+            <h1
+              className={`${styles.title} ${styles.reveal}`}
+              style={revealDelay(80)}
+            >
               Les données publiques, enfin utiles{" "}
               <span className={styles.titleAccent}>autour de vous</span>.
             </h1>
-            <p className={styles.lead}>
+            <p
+              className={`${styles.lead} ${styles.reveal}`}
+              style={revealDelay(160)}
+            >
               Comparez les prix des carburants sur une carte, station par
               station. D&apos;autres thèmes arrivent : équipements sportifs,
               risques, qualité de l&apos;eau.
             </p>
-            <div className={styles.actions}>
+            <div
+              className={`${styles.actions} ${styles.reveal}`}
+              style={revealDelay(240)}
+            >
               <Link className="button button--primary" href="/carburants/">
                 Voir les prix des carburants
                 <ArrowRight size={18} aria-hidden="true" />
@@ -108,8 +126,16 @@ const HomePage = () => (
                 <span className="visually-hidden"> (nouvel onglet)</span>
               </a>
             </div>
+            <div className={styles.reveal} style={revealDelay(340)}>
+              <LiveStats />
+            </div>
           </div>
-          <HeroPreview />
+          <div
+            className={`${styles.heroVisual} ${styles.reveal}`}
+            style={revealDelay(200)}
+          >
+            <FrancePriceMap />
+          </div>
         </div>
       </section>
 

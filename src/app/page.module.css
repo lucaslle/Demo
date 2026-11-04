@@ -4,26 +4,84 @@
   overflow: hidden;
 }
 
-.hero::before {
+/* Fond « aurore » : deux halos qui dérivent lentement. */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora::before,
+.aurora::after {
   content: "";
   position: absolute;
-  inset: -20% -10% auto auto;
-  width: 44rem;
-  height: 44rem;
+  width: 46rem;
+  height: 46rem;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: drift 18s ease-in-out infinite alternate;
+}
+
+.aurora::before {
+  top: -22rem;
+  right: -10rem;
   background: radial-gradient(
     closest-side,
-    color-mix(in srgb, var(--brand) 22%, transparent),
+    color-mix(in srgb, var(--brand) 32%, transparent),
     transparent
   );
-  pointer-events: none;
+}
+
+.aurora::after {
+  bottom: -26rem;
+  left: -14rem;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--good) 20%, transparent),
+    transparent
+  );
+  animation-duration: 24s;
+  animation-direction: alternate-reverse;
+}
+
+.reveal {
+  animation: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(-4rem, 3rem, 0) scale(1.15);
+  }
 }
 
 .heroInner {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
   gap: 3rem;
   align-items: center;
+}
+
+.heroVisual {
+  min-width: 0;
 }
 
 .heroText {
