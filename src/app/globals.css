@@ -3,48 +3,49 @@
 
   --font-sans:
     "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display:
+    "Bricolage Grotesque Variable", "Inter Variable", system-ui, sans-serif;
 
-  --bg: #f5f6fb;
+  --bg: #f4f6ef;
   --surface: #ffffff;
-  --surface-2: #eff1f8;
-  --surface-hover: #f5f6fd;
-  --text: #0f1420;
-  --text-muted: #4b5468;
-  --border: #e2e5ef;
-  --border-strong: #868fa5;
+  --surface-2: #eceee5;
+  --surface-hover: #f3f5ec;
+  --text: #0f130b;
+  --text-muted: #4d5547;
+  --border: #dfe3d5;
+  --border-strong: #7d8776;
 
-  --brand: #4f46e5;
-  --brand-hover: #4338ca;
-  --brand-contrast: #ffffff;
-  --brand-soft: #eceeff;
-  --brand-gradient: linear-gradient(
-    135deg,
-    #4f46e5 0%,
-    #7c3aed 55%,
-    #0ea5e9 100%
-  );
+  /* Vert citron : remplissage (boutons, puces) et variante lisible en texte. */
+  --brand: #c8f545;
+  --brand-hover: #b6e82f;
+  --brand-contrast: #0f130b;
+  --brand-soft: #e9f6c2;
+  --brand-text: #4a6a00;
+  --brand-gradient: linear-gradient(120deg, #4a6a00 0%, #1f7a4d 100%);
 
-  --good: #047857;
-  --good-soft: #e3f6ee;
-  --warn: #b45309;
-  --warn-soft: #fdf0dc;
-  --bad: #b91c1c;
-  --bad-soft: #fdeaea;
-  --focus: #b45309;
+  --good: #3d6b00;
+  --good-soft: #e4f3c3;
+  --warn: #a15c00;
+  --warn-soft: #fdeccf;
+  --bad: #c0262d;
+  --bad-soft: #fde7e7;
+  --focus: #1d4ed8;
 
-  --scale-1: #15803d;
-  --scale-2: #65a30d;
-  --scale-3: #eab308;
-  --scale-4: #ea580c;
-  --scale-5: #b91c1c;
+  --scale-1: #4d8a00;
+  --scale-2: #8a9a00;
+  --scale-3: #c98a00;
+  --scale-4: #d9560f;
+  --scale-5: #c0262d;
+
+  --glow: 0 0 0 5px rgb(160 210 30 / 0.22), 0 0 22px rgb(160 210 30 / 0.45);
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1.25rem;
-  --shadow-sm: 0 1px 2px rgb(15 20 32 / 0.06), 0 1px 3px rgb(15 20 32 / 0.08);
-  --shadow-md: 0 4px 12px rgb(15 20 32 / 0.08), 0 2px 4px rgb(15 20 32 / 0.06);
+  --shadow-sm: 0 1px 2px rgb(15 19 11 / 0.06), 0 1px 3px rgb(15 19 11 / 0.08);
+  --shadow-md: 0 4px 12px rgb(15 19 11 / 0.08), 0 2px 4px rgb(15 19 11 / 0.06);
   --shadow-lg:
-    0 18px 40px rgb(15 20 32 / 0.14), 0 4px 10px rgb(15 20 32 / 0.08);
+    0 18px 40px rgb(15 19 11 / 0.14), 0 4px 10px rgb(15 19 11 / 0.08);
 
   --header-height: 4rem;
 }
@@ -53,86 +54,82 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --bg: #0a0d16;
-    --surface: #121726;
-    --surface-2: #1a2033;
-    --surface-hover: #1b2236;
-    --text: #eef1f8;
-    --text-muted: #a3acc2;
-    --border: #262d44;
-    --border-strong: #7b85a1;
+    --bg: #090b0a;
+    --surface: #101311;
+    --surface-2: #181c19;
+    --surface-hover: #1d221e;
+    --text: #f2f5ee;
+    --text-muted: #a0a99c;
+    --border: #232924;
+    --border-strong: #6f7a6c;
 
-    --brand: #8b93ff;
-    --brand-hover: #a3a9ff;
-    --brand-contrast: #0a0d16;
-    --brand-soft: #1e2347;
-    --brand-gradient: linear-gradient(
-      135deg,
-      #8b93ff 0%,
-      #b18cff 55%,
-      #52c4ff 100%
-    );
+    --brand: #c8f545;
+    --brand-hover: #d8ff66;
+    --brand-contrast: #0a0d06;
+    --brand-soft: #1b2410;
+    --brand-text: #c8f545;
+    --brand-gradient: linear-gradient(120deg, #c8f545 0%, #7ef0b0 100%);
 
-    --good: #34d399;
-    --good-soft: #0f2a22;
-    --warn: #fbbf24;
-    --warn-soft: #2d2410;
-    --bad: #f87171;
-    --bad-soft: #2f1717;
-    --focus: #fbbf24;
+    --good: #c8f545;
+    --good-soft: #1b2410;
+    --warn: #ffb347;
+    --warn-soft: #2b2110;
+    --bad: #ff6b6b;
+    --bad-soft: #2c1417;
+    --focus: #7dd3fc;
 
-    --scale-1: #34d399;
-    --scale-2: #a3e635;
-    --scale-3: #facc15;
-    --scale-4: #fb923c;
-    --scale-5: #f87171;
+    --scale-1: #c8f545;
+    --scale-2: #e3e63a;
+    --scale-3: #ffc83d;
+    --scale-4: #ff8a3d;
+    --scale-5: #ff4d5e;
 
-    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow-md: 0 4px 14px rgb(0 0 0 / 0.45);
-    --shadow-lg: 0 18px 44px rgb(0 0 0 / 0.55);
+    --glow: 0 0 0 6px rgb(200 245 69 / 0.16), 0 0 26px rgb(200 245 69 / 0.55);
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
+    --shadow-md: 0 4px 14px rgb(0 0 0 / 0.55);
+    --shadow-lg: 0 18px 44px rgb(0 0 0 / 0.65);
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg: #0a0d16;
-  --surface: #121726;
-  --surface-2: #1a2033;
-  --surface-hover: #1b2236;
-  --text: #eef1f8;
-  --text-muted: #a3acc2;
-  --border: #262d44;
-  --border-strong: #7b85a1;
+  --bg: #090b0a;
+  --surface: #101311;
+  --surface-2: #181c19;
+  --surface-hover: #1d221e;
+  --text: #f2f5ee;
+  --text-muted: #a0a99c;
+  --border: #232924;
+  --border-strong: #6f7a6c;
 
-  --brand: #8b93ff;
-  --brand-hover: #a3a9ff;
-  --brand-contrast: #0a0d16;
-  --brand-soft: #1e2347;
-  --brand-gradient: linear-gradient(
-    135deg,
-    #8b93ff 0%,
-    #b18cff 55%,
-    #52c4ff 100%
-  );
+  --brand: #c8f545;
+  --brand-hover: #d8ff66;
+  --brand-contrast: #0a0d06;
+  --brand-soft: #1b2410;
+  --brand-text: #c8f545;
+  --brand-gradient: linear-gradient(120deg, #c8f545 0%, #7ef0b0 100%);
 
-  --good: #34d399;
-  --good-soft: #0f2a22;
-  --warn: #fbbf24;
-  --warn-soft: #2d2410;
-  --bad: #f87171;
-  --bad-soft: #2f1717;
-  --focus: #fbbf24;
+  --good: #c8f545;
+  --good-soft: #1b2410;
+  --warn: #ffb347;
+  --warn-soft: #2b2110;
+  --bad: #ff6b6b;
+  --bad-soft: #2c1417;
+  --focus: #7dd3fc;
 
-  --scale-1: #34d399;
-  --scale-2: #a3e635;
-  --scale-3: #facc15;
-  --scale-4: #fb923c;
-  --scale-5: #f87171;
+  --scale-1: #c8f545;
+  --scale-2: #e3e63a;
+  --scale-3: #ffc83d;
+  --scale-4: #ff8a3d;
+  --scale-5: #ff4d5e;
 
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
-  --shadow-md: 0 4px 14px rgb(0 0 0 / 0.45);
-  --shadow-lg: 0 18px 44px rgb(0 0 0 / 0.55);
+  --glow: 0 0 0 6px rgb(200 245 69 / 0.16), 0 0 26px rgb(200 245 69 / 0.55);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 14px rgb(0 0 0 / 0.55);
+  --shadow-lg: 0 18px 44px rgb(0 0 0 / 0.65);
 }
 
 * {
@@ -159,8 +156,9 @@ h1,
 h2,
 h3 {
   margin: 0;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
 }
 
 p {
@@ -168,7 +166,7 @@ p {
 }
 
 a {
-  color: var(--brand);
+  color: var(--brand-text);
   text-underline-offset: 0.2em;
 }
 
@@ -224,7 +222,7 @@ select {
   gap: 0.5rem;
   min-height: 2.75rem;
   padding: 0.5rem 1.25rem;
-  font-weight: 600;
+  font-weight: 650;
   text-decoration: none;
   border: 1px solid transparent;
   border-radius: 999px;

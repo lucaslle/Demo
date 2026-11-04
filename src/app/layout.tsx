@@ -1,3 +1,4 @@
+import "@fontsource-variable/bricolage-grotesque";
 import "@fontsource-variable/inter";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";

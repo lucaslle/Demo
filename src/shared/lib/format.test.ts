@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { formatPrice, formatRelativeTime, isStaleDate } from "./format";
+import {
+  formatEuros,
+  formatPrice,
+  formatRelativeTime,
+  isStaleDate,
+  splitPrice,
+} from "./format";
 
 const NOW = new Date("2026-11-04T12:00:00Z");
 
@@ -7,6 +13,19 @@ describe("formatPrice", () => {
   it("affiche trois décimales, la virgule française et le symbole euro", () => {
     expect(formatPrice(1.987).replace(/\s/g, " ")).toBe("1,987 €");
     expect(formatPrice(2.1).replace(/\s/g, " ")).toBe("2,100 €");
+  });
+});
+
+describe("splitPrice", () => {
+  it("sépare la dernière décimale pour l'afficher en exposant", () => {
+    expect(splitPrice(1.629)).toEqual({ main: "1,62", lastDigit: "9" });
+    expect(splitPrice(2.1)).toEqual({ main: "2,10", lastDigit: "0" });
+  });
+});
+
+describe("formatEuros", () => {
+  it("affiche un montant en euros avec deux décimales", () => {
+    expect(formatEuros(4).replace(/\s/g, " ")).toBe("4,00 €");
   });
 });
 

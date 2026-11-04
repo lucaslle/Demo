@@ -1,0 +1,28 @@
+.price {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.md {
+  font-size: 1.25rem;
+}
+
+.lg {
+  font-size: 1.75rem;
+}
+
+.xl {
+  font-size: clamp(3.25rem, 7vw, 4.75rem);
+}
+
+.sup {
+  margin-left: 0.04em;
+  font-size: 0.55em;
+  font-weight: 700;
+  line-height: 0;
+  vertical-align: 0.62em;
+}

@@ -16,6 +16,24 @@ export const STALE_PRICE_THRESHOLD_IN_DAYS = 7;
 export const formatPrice = (amount: number): string =>
   `${priceFormatter.format(amount)} €`;
 
+// Découpe un prix en « 1,62 » et « 9 » pour mettre la dernière décimale en exposant.
+export const splitPrice = (
+  amount: number,
+): { main: string; lastDigit: string } => {
+  const formatted = priceFormatter.format(amount);
+  return { main: formatted.slice(0, -1), lastDigit: formatted.slice(-1) };
+};
+
+const wholeEuroFormatter = new Intl.NumberFormat("fr-FR", {
+  style: "currency",
+  currency: "EUR",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+export const formatEuros = (amount: number): string =>
+  wholeEuroFormatter.format(amount);
+
 export const formatRelativeTime = (isoDate: string, now: Date): string => {
   const timestamp = Date.parse(isoDate);
   if (Number.isNaN(timestamp)) {
