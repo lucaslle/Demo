@@ -1,0 +1,129 @@
+.fuel-map-wrapper {
+  position: relative;
+  min-width: 0;
+}
+
+.fuel-map {
+  width: 100%;
+  height: calc(100vh - 15rem);
+  min-height: 26rem;
+  z-index: 0;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+@media (max-width: 52rem) {
+  .fuel-map {
+    height: 60vh;
+  }
+}
+
+.fuel-map-controls {
+  position: absolute;
+  left: 3.25rem;
+  top: 0.625rem;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  max-width: 16rem;
+}
+
+.fuel-map-controls__locate {
+  min-height: 2.25rem;
+  padding: 0.25rem 0.75rem;
+  font: inherit;
+  font-weight: 600;
+  color: #14171f;
+  background: #ffffff;
+  border: 2px solid rgb(0 0 0 / 0.35);
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.fuel-map-controls__locate:disabled {
+  cursor: progress;
+  opacity: 0.8;
+}
+
+.fuel-map-controls__error {
+  margin: 0;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.875rem;
+  color: #7f1d1d;
+  background: #ffffff;
+  border: 1px solid #b91c1c;
+  border-radius: 0.25rem;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  color: #14171f;
+}
+
+.price-marker {
+  background: none;
+  border: none;
+}
+
+.price-marker__label {
+  --tier-color: #166534;
+
+  position: relative;
+  display: block;
+  padding: 0.1875rem 0.375rem;
+  font:
+    700 0.8125rem/1.2 system-ui,
+    sans-serif;
+  text-align: center;
+  white-space: nowrap;
+  color: #14171f;
+  background: #ffffff;
+  border: 2px solid var(--tier-color);
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+}
+
+.price-marker__label::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--tier-color);
+  border-bottom: 0;
+}
+
+.price-marker--cheapest .price-marker__label {
+  --tier-color: #166534;
+
+  color: #ffffff;
+  background: #166534;
+}
+
+.price-marker--cheapest .price-marker__label::before {
+  content: "★ ";
+}
+
+.price-marker--low .price-marker__label {
+  --tier-color: #166534;
+}
+
+.price-marker--medium .price-marker__label {
+  --tier-color: #b45309;
+}
+
+.price-marker--high .price-marker__label {
+  --tier-color: #b91c1c;
+}
+
+.price-marker--selected .price-marker__label {
+  outline: 3px solid #0b5fff;
+  outline-offset: 2px;
+}
+
+.leaflet-marker-icon:focus-visible .price-marker__label {
+  outline: 3px solid #b45309;
+  outline-offset: 2px;
+}

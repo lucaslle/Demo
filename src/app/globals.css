@@ -1,16 +1,38 @@
 :root {
   --background: #ffffff;
   --foreground: #14171f;
+  --surface: #ffffff;
+  --surface-hover: #f1f4fa;
+  --border: #d5d9e2;
+  --border-strong: #6b7280;
+  --muted: #6b7280;
+  --muted-text: #4a5160;
   --accent: #0b5fff;
+  --danger: #b91c1c;
   --focus: #b45309;
+  --tier-cheapest: #166534;
+  --tier-low: #166534;
+  --tier-medium: #b45309;
+  --tier-high: #b91c1c;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0e1117;
     --foreground: #eef1f6;
+    --surface: #161b24;
+    --surface-hover: #1f2633;
+    --border: #2f3747;
+    --border-strong: #8b93a5;
+    --muted: #8b93a5;
+    --muted-text: #aab1c0;
     --accent: #7aa7ff;
+    --danger: #f87171;
     --focus: #fbbf24;
+    --tier-cheapest: #4ade80;
+    --tier-low: #4ade80;
+    --tier-medium: #fbbf24;
+    --tier-high: #f87171;
   }
 }
 
@@ -54,7 +76,7 @@ a {
   padding: 0.5rem 1rem;
   color: var(--background);
   background: var(--foreground);
-  z-index: 10;
+  z-index: 2000;
 }
 
 .skip-link:focus {
@@ -65,4 +87,14 @@ a {
   max-width: 48rem;
   margin: 0 auto;
   padding: 2rem 1rem;
+}
+
+.page--wide {
+  max-width: 90rem;
+}
+
+.page__source {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--muted-text);
 }

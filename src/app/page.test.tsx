@@ -16,4 +16,12 @@ describe("HomePage", () => {
 
     expect(screen.getByRole("main")).toHaveAttribute("id", "contenu");
   });
+
+  it("propose d'ouvrir la carte des carburants", () => {
+    render(<HomePage />);
+
+    const link = screen.getByRole("link", { name: "Prix des carburants" });
+
+    expect(link.getAttribute("href")).toMatch(/^\/carburants\/?$/);
+  });
 });

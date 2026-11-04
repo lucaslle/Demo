@@ -1,0 +1,28 @@
+.details {
+  min-width: 13rem;
+  color: #14171f;
+}
+
+.details p {
+  margin: 0 0 0.375rem;
+}
+
+.address {
+  font-weight: 600;
+}
+
+.mainPrice {
+  font-size: 1.0625rem;
+}
+
+.freshness {
+  font-size: 0.8125rem;
+  color: #4a5160;
+}
+
+.otherFuels {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0 0 1.125rem;
+  border-top: 1px solid #d5d9e2;
+  font-size: 0.875rem;
+}
