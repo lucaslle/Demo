@@ -1,10 +1,40 @@
 # Autour de moi
 
-Prix des carburants, équipements sportifs et risques près de chez soi, à partir
-des données ouvertes de l'État. Site 100 % statique, sans backend.
+Les données ouvertes de l'État rendues utiles autour de chez soi : carburants,
+bornes de recharge, entreprises, commerces bio, emploi, immobilier et énergie.
+Site 100 % statique, sans backend, sans compte ni clé d'API.
 
-> Projet en cours de construction. Le README complet (démo, captures, sources
-> des données, choix techniques, Lighthouse, accessibilité) sera rédigé à la fin.
+> Projet en cours de construction. Le README complet (démo, captures, choix
+> techniques, Lighthouse, accessibilité) sera rédigé à la fin.
+
+## Modules
+
+| Catégorie             | Module                       | Source des données                          |
+| --------------------- | ---------------------------- | ------------------------------------------- |
+| Mobilité et énergie   | Carburants                   | Prix des carburants (data.economie.gouv.fr) |
+| Mobilité et énergie   | Recharge électrique          | Bornes IRVE (ODRE)                          |
+| Mobilité et énergie   | Comparateur                  | Carburants et bornes IRVE                   |
+| Entreprises et emploi | Recherche d'entreprises      | API Recherche d'entreprises (DINUM)         |
+| Entreprises et emploi | Producteurs et commerces bio | API Professionnels bio (Agence Bio)         |
+| Entreprises et emploi | Emploi et salaires           | Données ouvertes Urssaf                     |
+| Immobilier et énergie | Ventes immobilières          | API Données foncières DVF (Cerema)          |
+| Immobilier et énergie | Diagnostics énergétiques     | API DPE logements et tertiaire (ADEME)      |
+| Immobilier et énergie | Consommation électrique      | Données ouvertes Enedis                     |
+
+Toutes ces API sont gratuites, sans clé et autorisent les appels depuis le
+navigateur (CORS), ce qui permet de se passer de serveur. Les lieux sont
+recherchés avec le géocodage de la Géoplateforme (IGN) et l'API Géo.
+
+### Ajouter un module
+
+Le menu du site et le répertoire de l'accueil sont générés à partir d'un seul
+registre, `src/features/hub/model/modules.ts` :
+
+1. ajouter une entrée dans `MODULES` (avec `href: null` tant que la page
+   n'existe pas : le module s'affiche alors « Bientôt ») ;
+2. au besoin, ajouter une catégorie dans `CATEGORIES` ;
+3. créer la page dans `src/app/<chemin>/page.tsx` et le code dans
+   `src/features/<module>/`.
 
 ## Stack
 

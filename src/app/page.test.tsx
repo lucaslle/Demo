@@ -108,6 +108,26 @@ describe("HomePage", () => {
     }
   });
 
+  it("liste les trois API d'immobilier et d'énergie sous leur catégorie", () => {
+    renderHome();
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Immobilier et énergie" }),
+    ).toBeInTheDocument();
+    for (const [name, href] of [
+      ["Ventes immobilières", "/immobilier/"],
+      ["Diagnostics énergétiques", "/dpe/"],
+      ["Consommation électrique", "/electricite/"],
+    ] as const) {
+      expect(
+        screen
+          .getByRole("link", { name })
+          .getAttribute("href")
+          ?.replace(/\/$/, ""),
+      ).toBe(href.replace(/\/$/, ""));
+    }
+  });
+
   it("présente les modules à venir sans les rendre cliquables", () => {
     renderHome();
 

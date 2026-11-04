@@ -5,8 +5,12 @@ import {
   Car,
   Dumbbell,
   Fuel,
+  Gauge,
+  House,
+  Landmark,
   Leaf,
   MapPinned,
+  PlugZap,
   Scale,
   ShieldAlert,
   Zap,
@@ -23,7 +27,8 @@ import {
 // Le menu du site et l'accueil se mettent à jour tout seuls.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type ModuleCategoryId = "mobility" | "business" | "territory";
+export type ModuleCategoryId =
+  "mobility" | "business" | "property" | "territory";
 
 export type ModuleCategory = {
   id: ModuleCategoryId;
@@ -59,6 +64,13 @@ export const CATEGORIES: readonly ModuleCategory[] = [
     title: "Entreprises et emploi",
     description: "Entreprises, commerces bio, effectifs et salaires.",
     icon: Briefcase,
+  },
+  {
+    id: "property",
+    title: "Immobilier et énergie",
+    description:
+      "Ventes de logements, diagnostics énergétiques et électricité.",
+    icon: Landmark,
   },
   {
     id: "territory",
@@ -146,6 +158,57 @@ export const MODULES: readonly AppModule[] = [
       "secteur",
       "département",
     ],
+  },
+  {
+    id: "immobilier",
+    title: "Ventes immobilières",
+    description:
+      "Les ventes de logements autour d'une adresse : prix, surface, prix au mètre carré et localisation.",
+    href: "/immobilier/",
+    icon: House,
+    categoryId: "property",
+    source: "API Données foncières DVF (Cerema)",
+    requiresApiKey: false,
+    keywords: [
+      "dvf",
+      "foncier",
+      "prix",
+      "m2",
+      "appartement",
+      "maison",
+      "vente",
+    ],
+  },
+  {
+    id: "dpe",
+    title: "Diagnostics énergétiques",
+    description:
+      "Étiquettes énergie et climat des logements et des bâtiments tertiaires d'une commune.",
+    href: "/dpe/",
+    icon: Gauge,
+    categoryId: "property",
+    source: "API DPE logements et DPE tertiaire (ADEME)",
+    requiresApiKey: false,
+    keywords: [
+      "dpe",
+      "ademe",
+      "passoire thermique",
+      "ges",
+      "étiquette",
+      "logement",
+    ],
+  },
+  {
+    id: "electricite",
+    title: "Consommation électrique",
+    description:
+      "La consommation d'électricité d'une commune et de ses quartiers, par secteur et par année.",
+    href: "/electricite/",
+    icon: PlugZap,
+    categoryId: "property",
+    source: "Données ouvertes Enedis",
+    requiresApiKey: false,
+    keywords: ["enedis", "électricité", "mwh", "iris", "quartier", "commune"],
   },
   {
     id: "sport",

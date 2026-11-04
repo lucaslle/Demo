@@ -70,9 +70,9 @@ const HomePage = () => (
               className={`${styles.lead} ${styles.reveal}`}
               style={revealDelay(160)}
             >
-              Carburants, bornes de recharge, entreprises, commerces bio, emploi
-              : explorez les API ouvertes de l&apos;État sur une carte ou en
-              graphiques, sans compte ni clé.
+              Carburants, bornes de recharge, entreprises, commerces bio,
+              emploi, immobilier, énergie : explorez les API ouvertes de
+              l&apos;État sur une carte ou en graphiques, sans compte ni clé.
             </p>
             <div
               className={`${styles.actions} ${styles.reveal}`}

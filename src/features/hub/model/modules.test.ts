@@ -44,6 +44,27 @@ describe("registre des modules", () => {
   });
 });
 
+describe("registre des modules : immobilier et énergie", () => {
+  it("propose les trois API d'immobilier et d'énergie sans clé", () => {
+    for (const id of ["immobilier", "dpe", "electricite"]) {
+      const appModule = MODULES.find((candidate) => candidate.id === id);
+
+      expect(appModule).toBeDefined();
+      expect(appModule && isAvailable(appModule)).toBe(true);
+      expect(appModule?.requiresApiKey).toBe(false);
+      expect(appModule?.categoryId).toBe("property");
+    }
+  });
+
+  it("retrouve ces modules par leur sigle ou leur fournisseur", () => {
+    expect(searchModules("dvf").map(({ id }) => id)).toEqual(["immobilier"]);
+    expect(searchModules("ademe").map(({ id }) => id)).toEqual(["dpe"]);
+    expect(searchModules("enedis").map(({ id }) => id)).toEqual([
+      "electricite",
+    ]);
+  });
+});
+
 describe("getModulesByCategory", () => {
   it("regroupe les modules par catégorie, dans l'ordre des catégories", () => {
     const groups = getModulesByCategory();
@@ -51,6 +72,7 @@ describe("getModulesByCategory", () => {
     expect(groups.map(({ category }) => category.id)).toEqual([
       "mobility",
       "business",
+      "property",
       "territory",
     ]);
     expect(groups.flatMap(({ modules }) => modules)).toHaveLength(
