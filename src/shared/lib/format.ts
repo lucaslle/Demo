@@ -53,6 +53,25 @@ const withReadableSpaces = (text: string): string =>
 export const formatInteger = (value: number): string =>
   withReadableSpaces(integerFormatter.format(value));
 
+const compactFormatter = new Intl.NumberFormat("fr-FR", {
+  notation: "compact",
+  maximumFractionDigits: 2,
+});
+
+// « 1,63 M », « 21,91 Md » : pour les grands nombres des graphiques.
+export const formatCompact = (value: number): string =>
+  withReadableSpaces(compactFormatter.format(value));
+
+const percentFormatter = new Intl.NumberFormat("fr-FR", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+  signDisplay: "exceptZero",
+});
+
+// Variation en pourcentage avec son signe : « +3,2 % ».
+export const formatPercent = (value: number): string =>
+  `${withReadableSpaces(percentFormatter.format(value))} %`;
+
 export const formatEuros = (amount: number): string =>
   withReadableSpaces(wholeEuroFormatter.format(amount));
 

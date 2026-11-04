@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  formatCompact,
+  formatPercent,
   formatEuros,
   formatPrice,
   formatRelativeTime,
@@ -20,6 +22,23 @@ describe("splitPrice", () => {
   it("sépare la dernière décimale pour l'afficher en exposant", () => {
     expect(splitPrice(1.629)).toEqual({ main: "1,62", lastDigit: "9" });
     expect(splitPrice(2.1)).toEqual({ main: "2,10", lastDigit: "0" });
+  });
+});
+
+describe("formatCompact et formatPercent", () => {
+  it("abrège les grands nombres", () => {
+    expect(formatCompact(1_631_106).replace(/\s/g, " ")).toBe("1,63 M");
+    expect(formatCompact(21_907_246_320).replace(/\s/g, " ")).toBe("21,91 Md");
+  });
+
+  it("affiche une variation avec son signe", () => {
+    // Le signe moins peut être le « − » typographique (U+2212) selon l'ICU.
+    const normalize = (text: string) =>
+      text.replace(/\s/g, " ").replace("−", "-");
+
+    expect(normalize(formatPercent(3.24))).toBe("+3,2 %");
+    expect(normalize(formatPercent(-0.56))).toBe("-0,6 %");
+    expect(normalize(formatPercent(0))).toBe("0,0 %");
   });
 });
 
