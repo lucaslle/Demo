@@ -1,0 +1,50 @@
+.details {
+  display: grid;
+  gap: 0.375rem;
+  justify-items: start;
+  min-width: 14rem;
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+.details p {
+  margin: 0;
+}
+
+.kind {
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-text);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 750;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.address {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.meta {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+  color: var(--brand-contrast);
+  background: var(--brand);
+  border-radius: 999px;
+}
