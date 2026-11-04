@@ -1,0 +1,9 @@
+.chart {
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-sans);
+}
+
+.chart :global(.recharts-surface) {
+  overflow: visible;
+}
