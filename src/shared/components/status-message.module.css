@@ -1,29 +1,44 @@
 .message {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border);
-  border-left-width: 4px;
-  border-radius: 0.375rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.375rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+}
+
+.icon {
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.25rem;
+  border-radius: 50%;
+}
+
+.info .icon {
+  color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.empty .icon {
+  color: var(--text-muted);
   background: var(--surface);
 }
 
-.info {
-  border-left-color: var(--accent);
-}
-
-.empty {
-  border-left-color: var(--muted);
-}
-
-.error {
-  border-left-color: var(--danger);
+.error .icon {
+  color: var(--bad);
+  background: var(--bad-soft);
 }
 
 .title {
-  margin: 0;
-  font-weight: 600;
+  font-weight: 650;
 }
 
 .detail {
-  margin: 0.25rem 0 0;
-  color: var(--muted-text);
+  max-width: 24rem;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  text-wrap: balance;
 }

@@ -1,39 +1,120 @@
 :root {
-  --background: #ffffff;
-  --foreground: #14171f;
+  color-scheme: light;
+
+  --font-sans:
+    "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --bg: #f5f6fb;
   --surface: #ffffff;
-  --surface-hover: #f1f4fa;
-  --border: #d5d9e2;
-  --border-strong: #6b7280;
-  --muted: #6b7280;
-  --muted-text: #4a5160;
-  --accent: #0b5fff;
-  --danger: #b91c1c;
+  --surface-2: #eff1f8;
+  --surface-hover: #f5f6fd;
+  --text: #0f1420;
+  --text-muted: #4b5468;
+  --border: #e2e5ef;
+  --border-strong: #868fa5;
+
+  --brand: #4f46e5;
+  --brand-hover: #4338ca;
+  --brand-contrast: #ffffff;
+  --brand-soft: #eceeff;
+  --brand-gradient: linear-gradient(
+    135deg,
+    #4f46e5 0%,
+    #7c3aed 55%,
+    #0ea5e9 100%
+  );
+
+  --good: #047857;
+  --good-soft: #e3f6ee;
+  --warn: #b45309;
+  --warn-soft: #fdf0dc;
+  --bad: #b91c1c;
+  --bad-soft: #fdeaea;
   --focus: #b45309;
-  --tier-cheapest: #166534;
-  --tier-low: #166534;
-  --tier-medium: #b45309;
-  --tier-high: #b91c1c;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --shadow-sm: 0 1px 2px rgb(15 20 32 / 0.06), 0 1px 3px rgb(15 20 32 / 0.08);
+  --shadow-md: 0 4px 12px rgb(15 20 32 / 0.08), 0 2px 4px rgb(15 20 32 / 0.06);
+  --shadow-lg:
+    0 18px 40px rgb(15 20 32 / 0.14), 0 4px 10px rgb(15 20 32 / 0.08);
+
+  --header-height: 4rem;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0e1117;
-    --foreground: #eef1f6;
-    --surface: #161b24;
-    --surface-hover: #1f2633;
-    --border: #2f3747;
-    --border-strong: #8b93a5;
-    --muted: #8b93a5;
-    --muted-text: #aab1c0;
-    --accent: #7aa7ff;
-    --danger: #f87171;
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --bg: #0a0d16;
+    --surface: #121726;
+    --surface-2: #1a2033;
+    --surface-hover: #1b2236;
+    --text: #eef1f8;
+    --text-muted: #a3acc2;
+    --border: #262d44;
+    --border-strong: #7b85a1;
+
+    --brand: #8b93ff;
+    --brand-hover: #a3a9ff;
+    --brand-contrast: #0a0d16;
+    --brand-soft: #1e2347;
+    --brand-gradient: linear-gradient(
+      135deg,
+      #8b93ff 0%,
+      #b18cff 55%,
+      #52c4ff 100%
+    );
+
+    --good: #34d399;
+    --good-soft: #0f2a22;
+    --warn: #fbbf24;
+    --warn-soft: #2d2410;
+    --bad: #f87171;
+    --bad-soft: #2f1717;
     --focus: #fbbf24;
-    --tier-cheapest: #4ade80;
-    --tier-low: #4ade80;
-    --tier-medium: #fbbf24;
-    --tier-high: #f87171;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 14px rgb(0 0 0 / 0.45);
+    --shadow-lg: 0 18px 44px rgb(0 0 0 / 0.55);
   }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0a0d16;
+  --surface: #121726;
+  --surface-2: #1a2033;
+  --surface-hover: #1b2236;
+  --text: #eef1f8;
+  --text-muted: #a3acc2;
+  --border: #262d44;
+  --border-strong: #7b85a1;
+
+  --brand: #8b93ff;
+  --brand-hover: #a3a9ff;
+  --brand-contrast: #0a0d16;
+  --brand-soft: #1e2347;
+  --brand-gradient: linear-gradient(
+    135deg,
+    #8b93ff 0%,
+    #b18cff 55%,
+    #52c4ff 100%
+  );
+
+  --good: #34d399;
+  --good-soft: #0f2a22;
+  --warn: #fbbf24;
+  --warn-soft: #2d2410;
+  --bad: #f87171;
+  --bad-soft: #2f1717;
+  --focus: #fbbf24;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 14px rgb(0 0 0 / 0.45);
+  --shadow-lg: 0 18px 44px rgb(0 0 0 / 0.55);
 }
 
 * {
@@ -41,27 +122,42 @@
 }
 
 html {
-  color-scheme: light dark;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  color: var(--foreground);
-  background: var(--background);
-  font-family:
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
-  line-height: 1.5;
+  min-height: 100dvh;
+  color: var(--text);
+  background: var(--bg);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+p {
+  margin: 0;
 }
 
 a {
-  color: var(--accent);
+  color: var(--brand);
+  text-underline-offset: 0.2em;
+}
+
+button,
+input,
+select {
+  font: inherit;
 }
 
 :focus-visible {
@@ -69,32 +165,86 @@ a {
   outline-offset: 2px;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 .skip-link {
   position: absolute;
   left: 1rem;
-  top: -4rem;
-  padding: 0.5rem 1rem;
-  color: var(--background);
-  background: var(--foreground);
-  z-index: 2000;
+  top: -5rem;
+  z-index: 3000;
+  padding: 0.625rem 1rem;
+  font-weight: 600;
+  color: var(--brand-contrast);
+  background: var(--brand);
+  border-radius: var(--radius-sm);
+  transition: top 0.15s ease;
 }
 
 .skip-link:focus {
   top: 1rem;
 }
 
-.page {
-  max-width: 48rem;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+.container {
+  width: min(100% - 2rem, 72rem);
+  margin-inline: auto;
 }
 
-.page--wide {
-  max-width: 90rem;
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.page__source {
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  color: var(--muted-text);
+.button--primary {
+  color: var(--brand-contrast);
+  background: var(--brand);
+  box-shadow: var(--shadow-md);
+}
+
+.button--primary:hover {
+  background: var(--brand-hover);
+  transform: translateY(-1px);
+}
+
+.button--secondary {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border-strong);
+}
+
+.button--secondary:hover {
+  background: var(--surface-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
