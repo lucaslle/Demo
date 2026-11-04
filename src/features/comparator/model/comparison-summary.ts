@@ -1,4 +1,4 @@
-import { formatEuros } from "@/shared/lib/format";
+import { formatEuros, formatInteger } from "@/shared/lib/format";
 import type { Scenario } from "./cost";
 
 // Phrase de synthèse en langage courant, adaptée aux trois cas possibles :
@@ -11,7 +11,7 @@ export const describeComparison = (
   const cheaper = electric.filter(
     ({ annualSavingsVsFuel }) => annualSavingsVsFuel > 0,
   );
-  const kilometers = new Intl.NumberFormat("fr-FR").format(annualKm);
+  const kilometers = formatInteger(annualKm);
 
   if (cheaper.length === 0) {
     return "Avec ces hypothèses, le carburant reste moins cher que toutes les façons de recharger.";

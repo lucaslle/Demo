@@ -1,15 +1,13 @@
 "use client";
 
 import { AnimatedNumber } from "@/shared/components/animated-number";
-import { formatPrice, formatRelativeTime } from "@/shared/lib/format";
+import {
+  formatInteger,
+  formatPrice,
+  formatRelativeTime,
+} from "@/shared/lib/format";
 import { useDepartmentPrices } from "../hooks/use-department-prices";
 import styles from "./live-stats.module.css";
-
-const integerFormatter = new Intl.NumberFormat("fr-FR", {
-  maximumFractionDigits: 0,
-});
-
-const formatCount = (count: number): string => integerFormatter.format(count);
 
 export const LiveStats = () => {
   const { data, isError, dataUpdatedAt } = useDepartmentPrices();
@@ -32,7 +30,7 @@ export const LiveStats = () => {
           <dd>
             <AnimatedNumber
               value={data?.totalStations ?? null}
-              format={formatCount}
+              format={formatInteger}
             />
           </dd>
         </div>

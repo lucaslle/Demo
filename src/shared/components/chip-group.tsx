@@ -11,6 +11,8 @@ type ChipGroupProps<Value extends string> = {
   options: readonly ChipOption<Value>[];
   value: Value;
   onChange: (value: Value) => void;
+  // "scroll" : une seule ligne défilante ; "wrap" : retour à la ligne.
+  layout?: "scroll" | "wrap";
 };
 
 // Groupe de boutons radio natifs : navigation aux flèches et lecteurs d'écran
@@ -20,13 +22,14 @@ export const ChipGroup = <Value extends string>({
   options,
   value,
   onChange,
+  layout = "scroll",
 }: ChipGroupProps<Value>) => {
   const groupName = useId();
 
   return (
     <fieldset className={styles.group} role="radiogroup">
       <legend className={styles.legend}>{legend}</legend>
-      <div className={styles.chips}>
+      <div className={styles.chips} data-layout={layout}>
         {options.map((option) => (
           <label key={option.value} className={styles.chip}>
             <input

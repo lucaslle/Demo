@@ -71,3 +71,10 @@
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
+
+.chips[data-layout="wrap"] {
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}

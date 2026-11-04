@@ -10,6 +10,7 @@ import { useObservedTariffs } from "@/features/irve/hooks/use-observed-tariffs";
 import { NumberField } from "@/shared/components/number-field";
 import {
   formatEuros,
+  formatInteger,
   formatPrice,
   formatRelativeTime,
 } from "@/shared/lib/format";
@@ -28,8 +29,6 @@ import {
 } from "../model/defaults";
 import { useComparatorStore } from "../stores/comparator-store";
 import styles from "./comparator.module.css";
-
-const kmFormatter = new Intl.NumberFormat("fr-FR");
 
 export const Comparator = () => {
   const settings = useComparatorStore();
@@ -103,6 +102,7 @@ export const Comparator = () => {
           </h2>
 
           <FuelChips
+            layout="wrap"
             value={settings.fuel}
             onChange={(fuel) => update({ fuel, fuelPriceOverride: null })}
           />
@@ -133,6 +133,7 @@ export const Comparator = () => {
               <NumberField
                 label="Distance par an"
                 unit="km"
+                format={formatInteger}
                 value={settings.annualKm}
                 min={LIMITS.annualKm.min}
                 max={LIMITS.annualKm.max}
@@ -265,8 +266,7 @@ export const Comparator = () => {
                     Carburant : moyenne nationale du{" "}
                     {FUEL_LABELS[settings.fuel]} (
                     {formatPrice(nationalFuelPrice)}
-                    /L sur{" "}
-                    {kmFormatter.format(
+                    /L sur {formatInteger(
                       departmentPrices.data.totalStations,
                     )}{" "}
                     stations
@@ -281,7 +281,7 @@ export const Comparator = () => {
               </li>
               <li>
                 {observedNormal !== null && observedFast !== null
-                  ? `Bornes : médiane des tarifs affichés par les opérateurs dans la base nationale des bornes (${kmFormatter.format(observedNormal.sampleSize)} points en charge normale, ${kmFormatter.format(observedFast.sampleSize)} en charge rapide).`
+                  ? `Bornes : médiane des tarifs affichés par les opérateurs dans la base nationale des bornes (${formatInteger(observedNormal.sampleSize)} points en charge normale, ${formatInteger(observedFast.sampleSize)} en charge rapide).`
                   : "Bornes : valeurs indicatives, tarifs affichés indisponibles."}
               </li>
               <li>Domicile : hypothèse, à adapter à votre contrat.</li>

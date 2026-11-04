@@ -32,8 +32,29 @@ const wholeEuroFormatter = new Intl.NumberFormat("fr-FR", {
   maximumFractionDigits: 2,
 });
 
+// Nombre saisi dans un champ : virgule décimale française, sans séparateur de
+// milliers pour rester facile à retaper.
+export const formatDecimal = (value: number): string =>
+  String(value).replace(".", ",");
+
+const integerFormatter = new Intl.NumberFormat("fr-FR", {
+  useGrouping: "always",
+  maximumFractionDigits: 0,
+});
+
+// Le séparateur de milliers français est une espace fine insécable (U+202F),
+// presque invisible avec la plupart des polices : on la remplace par une espace
+// insécable ordinaire pour que « 9 823 » ne se lise pas « 9823 ».
+const NARROW_NO_BREAK_SPACE = /\u202f/g;
+const NO_BREAK_SPACE = "\u00a0";
+const withReadableSpaces = (text: string): string =>
+  text.replace(NARROW_NO_BREAK_SPACE, NO_BREAK_SPACE);
+
+export const formatInteger = (value: number): string =>
+  withReadableSpaces(integerFormatter.format(value));
+
 export const formatEuros = (amount: number): string =>
-  wholeEuroFormatter.format(amount);
+  withReadableSpaces(wholeEuroFormatter.format(amount));
 
 export const formatRelativeTime = (isoDate: string, now: Date): string => {
   const timestamp = Date.parse(isoDate);
