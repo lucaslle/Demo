@@ -21,7 +21,7 @@ import {
 } from "@/features/route/model/route-state";
 import { useResolvedTheme } from "@/shared/hooks/use-resolved-theme";
 import { MAP_MAX_ZOOM, MAP_MIN_ZOOM } from "../model/map-config";
-import type { MapView, Viewport } from "../model/viewport";
+import type { MapFocusTarget, MapView, Viewport } from "../model/viewport";
 
 // Fond de carte Plan IGN (Géoplateforme) : officiel, gratuit, sans clé. Le mode
 // sombre est obtenu en retraitant les tuiles en CSS (voir map-shell.css).
@@ -69,6 +69,8 @@ type MapShellProps = {
   userPosition: LatLng | null;
   locationStatus: LocationStatus;
   route: Route | null;
+  // Quand elle change, la carte se déplace vers cette cible.
+  focusTarget?: MapFocusTarget | null;
   onViewportChange: (viewport: Viewport) => void;
   onLocate: () => void;
   children: ReactNode;
@@ -83,6 +85,7 @@ export const MapShell = ({
   userPosition,
   locationStatus,
   route,
+  focusTarget = null,
   onViewportChange,
   onLocate,
   children,
@@ -91,6 +94,12 @@ export const MapShell = ({
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [hasPressedLocate, setHasPressedLocate] = useState(false);
   const shouldFlyToUserRef = useRef(false);
+
+  useEffect(() => {
+    if (focusTarget !== null && map !== null) {
+      map.flyTo([focusTarget.lat, focusTarget.lng], focusTarget.zoom);
+    }
+  }, [focusTarget, map]);
 
   // Après un clic sur « Me localiser », la carte se centre dès que la position
   // arrive (la demande au navigateur peut prendre quelques secondes).
