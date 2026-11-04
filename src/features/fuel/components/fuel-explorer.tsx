@@ -7,6 +7,8 @@ import { StatusMessage } from "@/shared/components/status-message";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { formatPrice } from "@/shared/lib/format";
 import { usePreferencesStore } from "@/shared/stores/preferences-store";
+import { useRouteState } from "@/features/route/hooks/use-route-state";
+import { useUserLocation } from "@/features/route/hooks/use-user-location";
 import { useFuelUrlState } from "../hooks/use-fuel-url-state";
 import {
   MIN_ZOOM_FOR_STATIONS,
@@ -21,6 +23,7 @@ import styles from "./fuel-explorer.module.css";
 import { FuelChips } from "./fuel-chips";
 import { ListSkeleton } from "./list-skeleton";
 import { PriceDistribution } from "./price-distribution";
+import { RouteCard } from "./route-card";
 import { SavingsCard } from "./savings-card";
 import { StationList } from "./station-list";
 import { StationMap } from "./station-map";
@@ -37,6 +40,7 @@ export const FuelExplorer = () => {
   const [selectedStationId, setSelectedStationId] = useState<number | null>(
     null,
   );
+  const userLocation = useUserLocation();
   const debouncedViewport = useDebouncedValue(
     viewport,
     VIEWPORT_DEBOUNCE_IN_MS,
@@ -80,6 +84,27 @@ export const FuelExplorer = () => {
     });
   }, [debouncedViewport, fuel, writeState]);
 
+  const selectedStation =
+    selectedStationId === null
+      ? undefined
+      : stations?.find(({ id }) => id === selectedStationId);
+  const selectedPrice = selectedStation?.prices[fuel];
+
+  // Choisir une station déclenche la demande de position, une seule fois :
+  // c'est le moment où l'itinéraire devient utile à l'utilisateur.
+  const { status: locationStatus, locate } = userLocation;
+  useEffect(() => {
+    if (selectedStationId !== null && locationStatus === "idle") {
+      locate();
+    }
+  }, [selectedStationId, locationStatus, locate]);
+
+  const routeState = useRouteState({
+    origin: userLocation.position,
+    locationStatus,
+    destination: selectedStation?.position ?? null,
+  });
+
   const handleFuelChange = (nextFuel: FuelType) => {
     setFuel(nextFuel);
     setPreferredFuel(nextFuel);
@@ -113,7 +138,17 @@ export const FuelExplorer = () => {
       <div className={styles.top}>
         <h1 className={styles.title}>Prix des carburants</h1>
         <FuelChips value={fuel} onChange={handleFuelChange} />
-        {cheapestStation !== undefined &&
+        {selectedStation !== undefined && selectedPrice !== undefined ? (
+          <RouteCard
+            station={selectedStation}
+            price={selectedPrice}
+            fuel={fuel}
+            routeState={routeState}
+            onRetryLocate={userLocation.locate}
+            onClose={() => setSelectedStationId(null)}
+          />
+        ) : (
+          cheapestStation !== undefined &&
           priceSummary !== null &&
           !hasError && (
             <>
@@ -129,7 +164,8 @@ export const FuelExplorer = () => {
                 />
               </div>
             </>
-          )}
+          )
+        )}
         <p className={styles.summary} role="status" aria-live="polite">
           {summary}
         </p>
@@ -148,6 +184,10 @@ export const FuelExplorer = () => {
           onSelectStation={setSelectedStationId}
           onDeselectStation={handleDeselectStation}
           onViewportChange={setViewport}
+          userPosition={userLocation.position}
+          locationStatus={userLocation.status}
+          onLocate={userLocation.locate}
+          routeState={routeState}
         />
         {priceSummary !== null && !hasError && (
           <SavingsCard summary={priceSummary} />

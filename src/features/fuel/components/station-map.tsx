@@ -8,7 +8,7 @@ import {
   type Marker as LeafletMarker,
 } from "leaflet";
 import { LoaderCircle, LocateFixed } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -17,6 +17,15 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
+import { RouteLayer } from "@/features/route/components/route-layer";
+import type { LocationStatus } from "@/features/route/hooks/use-user-location";
+import type { LatLng } from "@/features/route/model/route";
+import {
+  LOCATION_DENIED_MESSAGE,
+  LOCATION_UNAVAILABLE_MESSAGE,
+  summarizeRouteState,
+  type RouteState,
+} from "@/features/route/model/route-state";
 import { useResolvedTheme } from "@/shared/hooks/use-resolved-theme";
 import { formatPrice, splitPrice } from "@/shared/lib/format";
 import type { DisplayedStation } from "../model/displayed-station";
@@ -34,7 +43,6 @@ const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.ign.fr/">IGN</a> – Géoplateforme';
 
 const LOCATE_ZOOM = 14;
-const LOCATE_TIMEOUT_IN_MS = 10_000;
 const SELECTED_MARKER_Z_OFFSET = 1000;
 const CHEAPEST_MARKER_Z_OFFSET = 500;
 
@@ -89,15 +97,17 @@ type StationMarkerProps = {
   fuel: FuelType;
   now: Date;
   isSelected: boolean;
+  routeSummary: string | null;
   onSelectStation: (stationId: number) => void;
   onDeselectStation: (stationId: number) => void;
 };
 
-const StationMarker = ({
+const StationMarkerView = ({
   displayedStation,
   fuel,
   now,
   isSelected,
+  routeSummary,
   onSelectStation,
   onDeselectStation,
 }: StationMarkerProps) => {
@@ -118,9 +128,17 @@ const StationMarker = ({
     [onSelectStation, onDeselectStation, station.id],
   );
 
+  // La fenêtre suit la sélection, que celle-ci vienne de la carte, de la liste
+  // ou du bouton de fermeture du panneau.
   useEffect(() => {
+    const marker = markerRef.current;
+    if (marker === null) {
+      return;
+    }
     if (isSelected) {
-      markerRef.current?.openPopup();
+      marker.openPopup();
+    } else {
+      marker.closePopup();
     }
   }, [isSelected]);
 
@@ -145,11 +163,34 @@ const StationMarker = ({
           displayedStation={displayedStation}
           fuel={fuel}
           now={now}
+          routeSummary={routeSummary}
         />
       </Popup>
     </Marker>
   );
 };
+
+// Un déplacement de la carte recalcule la liste des stations affichées : sans
+// cette comparaison, chaque marqueur se re-rendait et mettait à jour sa fenêtre
+// ouverte, qui recadrait la carte et relançait un déplacement en boucle.
+const areMarkerPropsEqual = (
+  previous: StationMarkerProps,
+  next: StationMarkerProps,
+): boolean =>
+  previous.displayedStation.station === next.displayedStation.station &&
+  previous.displayedStation.price.amount ===
+    next.displayedStation.price.amount &&
+  previous.displayedStation.price.updatedAt ===
+    next.displayedStation.price.updatedAt &&
+  previous.displayedStation.tier === next.displayedStation.tier &&
+  previous.fuel === next.fuel &&
+  previous.now === next.now &&
+  previous.isSelected === next.isSelected &&
+  previous.routeSummary === next.routeSummary &&
+  previous.onSelectStation === next.onSelectStation &&
+  previous.onDeselectStation === next.onDeselectStation;
+
+const StationMarker = memo(StationMarkerView, areMarkerPropsEqual);
 
 type StationMapProps = {
   initialView: MapView;
@@ -157,9 +198,13 @@ type StationMapProps = {
   fuel: FuelType;
   now: Date;
   selectedStationId: number | null;
+  userPosition: LatLng | null;
+  locationStatus: LocationStatus;
+  routeState: RouteState;
   onSelectStation: (stationId: number) => void;
   onDeselectStation: (stationId: number) => void;
   onViewportChange: (viewport: Viewport) => void;
+  onLocate: () => void;
 };
 
 export const StationMap = ({
@@ -168,42 +213,48 @@ export const StationMap = ({
   fuel,
   now,
   selectedStationId,
+  userPosition,
+  locationStatus,
+  routeState,
   onSelectStation,
   onDeselectStation,
   onViewportChange,
+  onLocate,
 }: StationMapProps) => {
   const theme = useResolvedTheme();
   const [map, setMap] = useState<LeafletMap | null>(null);
-  const [isLocating, setIsLocating] = useState(false);
-  const [locateError, setLocateError] = useState<string | null>(null);
+  const [hasPressedLocate, setHasPressedLocate] = useState(false);
+  const shouldFlyToUserRef = useRef(false);
 
-  const locateUser = () => {
-    if (map === null) {
-      return;
+  // Après un clic sur « Me localiser », la carte se centre dès que la position
+  // arrive (la demande au navigateur peut prendre quelques secondes).
+  useEffect(() => {
+    if (shouldFlyToUserRef.current && userPosition !== null && map !== null) {
+      shouldFlyToUserRef.current = false;
+      map.flyTo([userPosition.lat, userPosition.lng], LOCATE_ZOOM);
     }
-    if (!("geolocation" in navigator)) {
-      setLocateError(
-        "La géolocalisation n'est pas disponible sur ce navigateur.",
-      );
-      return;
-    }
+  }, [userPosition, map]);
 
-    setLocateError(null);
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        setIsLocating(false);
-        map.flyTo([coords.latitude, coords.longitude], LOCATE_ZOOM);
-      },
-      () => {
-        setIsLocating(false);
-        setLocateError(
-          "Position indisponible. Autorisez la géolocalisation ou déplacez la carte.",
-        );
-      },
-      { timeout: LOCATE_TIMEOUT_IN_MS },
-    );
+  const handleLocateClick = () => {
+    setHasPressedLocate(true);
+    if (userPosition !== null && map !== null) {
+      map.flyTo([userPosition.lat, userPosition.lng], LOCATE_ZOOM);
+    } else {
+      shouldFlyToUserRef.current = true;
+    }
+    onLocate();
   };
+
+  const isLocating = locationStatus === "locating";
+  const locateError =
+    hasPressedLocate && locationStatus === "denied"
+      ? LOCATION_DENIED_MESSAGE
+      : hasPressedLocate && locationStatus === "unavailable"
+        ? LOCATION_UNAVAILABLE_MESSAGE
+        : null;
+
+  const route = routeState.status === "ready" ? routeState.route : null;
+  const routeSummary = summarizeRouteState(routeState);
 
   return (
     <div
@@ -229,17 +280,22 @@ export const StationMap = ({
           maxZoom={MAP_MAX_ZOOM}
         />
         <ViewportReporter onViewportChange={onViewportChange} />
-        {displayedStations.map((displayedStation) => (
-          <StationMarker
-            key={displayedStation.station.id}
-            displayedStation={displayedStation}
-            fuel={fuel}
-            now={now}
-            isSelected={displayedStation.station.id === selectedStationId}
-            onSelectStation={onSelectStation}
-            onDeselectStation={onDeselectStation}
-          />
-        ))}
+        <RouteLayer userPosition={userPosition} route={route} />
+        {displayedStations.map((displayedStation) => {
+          const isSelected = displayedStation.station.id === selectedStationId;
+          return (
+            <StationMarker
+              key={displayedStation.station.id}
+              displayedStation={displayedStation}
+              fuel={fuel}
+              now={now}
+              isSelected={isSelected}
+              routeSummary={isSelected ? routeSummary : null}
+              onSelectStation={onSelectStation}
+              onDeselectStation={onDeselectStation}
+            />
+          );
+        })}
       </MapContainer>
 
       <div className="fuel-map-controls">
@@ -251,7 +307,7 @@ export const StationMap = ({
         <button
           type="button"
           className="fuel-map-controls__locate"
-          onClick={locateUser}
+          onClick={handleLocateClick}
           disabled={map === null || isLocating}
           aria-label={isLocating ? "Localisation en cours" : "Me localiser"}
           title="Me localiser"

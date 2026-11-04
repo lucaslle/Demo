@@ -1,3 +1,4 @@
+import { Car } from "lucide-react";
 import { PriceDisplay } from "@/shared/components/price-display";
 import { formatPrice } from "@/shared/lib/format";
 import type { DisplayedStation } from "../model/displayed-station";
@@ -10,12 +11,14 @@ type StationDetailsProps = {
   displayedStation: DisplayedStation;
   fuel: FuelType;
   now: Date;
+  routeSummary?: string | null;
 };
 
 export const StationDetails = ({
   displayedStation,
   fuel,
   now,
+  routeSummary = null,
 }: StationDetailsProps) => {
   const { station, price, tier } = displayedStation;
   const otherFuels = FUEL_TYPES.flatMap((otherFuel) => {
@@ -40,6 +43,12 @@ export const StationDetails = ({
       <p className={styles.freshness}>
         <PriceFreshness updatedAt={price.updatedAt} now={now} />
       </p>
+      {routeSummary !== null && (
+        <p className={styles.route}>
+          <Car size={16} aria-hidden="true" />
+          {routeSummary}
+        </p>
+      )}
       {otherFuels.length > 0 && (
         <ul className={styles.otherFuels}>
           {otherFuels.map((otherFuel) => (
