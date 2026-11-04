@@ -1,0 +1,131 @@
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  max-width: 16rem;
+  padding: 0 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.button:hover {
+  background: var(--surface-hover);
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.button[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+/* Le panneau se positionne par rapport à l'en-tête (position: sticky). */
+.panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: calc(100dvh - var(--header-height));
+  padding: 1.25rem max(1rem, calc((100% - 72rem) / 2)) 1.5rem;
+  overflow-y: auto;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1.5rem;
+}
+
+.category {
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+}
+
+.categoryTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.list {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link,
+.soon {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 2.5rem;
+  padding: 0 0.625rem;
+  border-radius: var(--radius-sm);
+}
+
+.link {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.link:hover {
+  background: var(--surface-2);
+}
+
+.link[aria-current="page"] {
+  color: var(--brand-text);
+  background: var(--brand-soft);
+  font-weight: 650;
+}
+
+.soon {
+  color: var(--text-muted);
+}
+
+.soonBadge {
+  margin-left: auto;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  background: var(--surface-2);
+  border-radius: 999px;
+}
+
+.home {
+  display: inline-block;
+  margin-top: 1rem;
+  font-weight: 600;
+}

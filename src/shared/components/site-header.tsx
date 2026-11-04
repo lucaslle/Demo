@@ -1,8 +1,8 @@
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { ModulesMenu } from "@/features/hub/components/modules-menu";
 import { REPOSITORY_URL, SITE_NAME } from "../lib/site";
 import { BrandLogo } from "./brand-logo";
-import { NavLink } from "./nav-link";
 import styles from "./site-header.module.css";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -14,10 +14,8 @@ export const SiteHeader = () => (
         <span className={styles.brandName}>{SITE_NAME}</span>
       </Link>
 
-      <nav aria-label="Navigation principale" className={styles.nav}>
-        <NavLink href="/carburants/">Carburants</NavLink>
-        <NavLink href="/recharge/">Recharge</NavLink>
-        <NavLink href="/comparateur/">Comparateur</NavLink>
+      <div className={styles.actions}>
+        <ModulesMenu />
         <a
           className={`${styles.navLink} ${styles.hideOnMobile}`}
           href={REPOSITORY_URL}
@@ -29,7 +27,7 @@ export const SiteHeader = () => (
           <span className="visually-hidden"> (nouvel onglet)</span>
         </a>
         <ThemeToggle />
-      </nav>
+      </div>
     </div>
   </header>
 );

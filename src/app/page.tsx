@@ -1,20 +1,16 @@
 import {
   Accessibility,
   ArrowRight,
-  Dumbbell,
   ExternalLink,
-  Fuel,
   Radio,
-  Scale,
   ServerOff,
-  ShieldAlert,
-  Zap,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { FrancePriceMap } from "@/features/fuel/components/france-price-map";
 import { LiveStats } from "@/features/fuel/components/live-stats";
+import { ModuleDirectory } from "@/features/hub/components/module-directory";
 import { SiteFooter } from "@/shared/components/site-footer";
 import { REPOSITORY_URL } from "@/shared/lib/site";
 import styles from "./page.module.css";
@@ -30,7 +26,7 @@ const HIGHLIGHTS: Highlight[] = [
     icon: Radio,
     title: "Données officielles",
     description:
-      "Les prix viennent directement du service de l'État, mis à jour toutes les quelques minutes et validés avant affichage.",
+      "Les données viennent directement des services de l'État, mises à jour en continu et validées avant affichage.",
   },
   {
     icon: ServerOff,
@@ -42,52 +38,7 @@ const HIGHLIGHTS: Highlight[] = [
     icon: Accessibility,
     title: "Pensé pour tous",
     description:
-      "Navigation au clavier, focus visible, contrastes soignés et une liste équivalente à la carte.",
-  },
-];
-
-type Module = {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  href: string | null;
-};
-
-const MODULES: Module[] = [
-  {
-    icon: Fuel,
-    title: "Carburants",
-    description:
-      "Trouvez la station la moins chère autour de vous et comparez les prix de la zone.",
-    href: "/carburants/",
-  },
-  {
-    icon: Zap,
-    title: "Recharge électrique",
-    description:
-      "Plus de 160 000 points de charge : puissance, prises, tarif affiché et itinéraire jusqu'à la borne.",
-    href: "/recharge/",
-  },
-  {
-    icon: Scale,
-    title: "Comparateur",
-    description:
-      "Carburant ou électrique ? Ce que coûte un trajet, aux prix réels du jour et à vos hypothèses.",
-    href: "/comparateur/",
-  },
-  {
-    icon: Dumbbell,
-    title: "Équipements sportifs",
-    description:
-      "City-stades, gymnases, terrains : 334 000 équipements recensés par le ministère des Sports.",
-    href: null,
-  },
-  {
-    icon: ShieldAlert,
-    title: "Risques",
-    description:
-      "Inondation, sols pollués, sites industriels : les risques connus près d'une adresse.",
-    href: null,
+      "Navigation au clavier, focus visible, contrastes soignés et une liste équivalente à chaque carte.",
   },
 ];
 
@@ -119,9 +70,9 @@ const HomePage = () => (
               className={`${styles.lead} ${styles.reveal}`}
               style={revealDelay(160)}
             >
-              Comparez les prix des carburants sur une carte, station par
-              station. D&apos;autres thèmes arrivent : équipements sportifs,
-              risques, qualité de l&apos;eau.
+              Carburants, bornes de recharge, entreprises, commerces bio, emploi
+              : explorez les API ouvertes de l&apos;État sur une carte ou en
+              graphiques, sans compte ni clé.
             </p>
             <div
               className={`${styles.actions} ${styles.reveal}`}
@@ -155,31 +106,7 @@ const HomePage = () => (
         </div>
       </section>
 
-      <section className="container" aria-labelledby="titre-modules">
-        <h2 id="titre-modules" className={styles.sectionTitle}>
-          Les thèmes
-        </h2>
-        <ul className={styles.modules}>
-          {MODULES.map(({ icon: Icon, title, description, href }) => (
-            <li key={title} className={styles.module}>
-              <span className={styles.moduleIcon}>
-                <Icon size={22} aria-hidden="true" />
-              </span>
-              <h3 className={styles.moduleTitle}>
-                {href === null ? (
-                  title
-                ) : (
-                  <Link href={href} className={styles.moduleLink}>
-                    {title}
-                  </Link>
-                )}
-              </h3>
-              <p className={styles.moduleText}>{description}</p>
-              {href === null && <span className={styles.soon}>Bientôt</span>}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <ModuleDirectory />
 
       <section className="container" aria-labelledby="titre-coulisses">
         <h2 id="titre-coulisses" className={styles.sectionTitle}>

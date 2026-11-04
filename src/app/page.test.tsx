@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import HomePage from "./page";
 
@@ -75,7 +76,7 @@ describe("HomePage", () => {
     expect(screen.getByRole("main")).toHaveAttribute("id", "contenu");
   });
 
-  it("propose d'ouvrir la carte des carburants depuis le héros et la liste des thèmes", () => {
+  it("ouvre la carte des carburants depuis le héros et depuis le répertoire", () => {
     renderHome();
 
     const links = screen
@@ -92,7 +93,22 @@ describe("HomePage", () => {
     }
   });
 
-  it("présente les thèmes à venir sans les rendre cliquables", () => {
+  it("liste les modules par catégorie, dont les trois API d'entreprises et d'emploi", () => {
+    renderHome();
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Entreprises et emploi" }),
+    ).toBeInTheDocument();
+    for (const name of [
+      "Recherche d'entreprises",
+      "Producteurs et commerces bio",
+      "Emploi et salaires",
+    ]) {
+      expect(screen.getByRole("link", { name })).toBeInTheDocument();
+    }
+  });
+
+  it("présente les modules à venir sans les rendre cliquables", () => {
     renderHome();
 
     expect(
@@ -101,13 +117,52 @@ describe("HomePage", () => {
     expect(screen.getAllByText("Bientôt")).toHaveLength(2);
   });
 
-  it("hiérarchise les titres : un h1 puis des h2", () => {
+  it("indique qu'aucune clé API n'est nécessaire", () => {
+    renderHome();
+
+    expect(screen.getAllByText("Sans clé API").length).toBeGreaterThanOrEqual(
+      6,
+    );
+  });
+
+  it("filtre les modules avec la recherche", async () => {
+    renderHome();
+
+    await userEvent.type(
+      screen.getByRole("searchbox", { name: "Rechercher un module" }),
+      "urssaf",
+    );
+
+    expect(
+      screen.getByRole("link", { name: "Emploi et salaires" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Carburants" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("propose un message clair quand rien ne correspond", async () => {
+    renderHome();
+
+    await userEvent.type(
+      screen.getByRole("searchbox", { name: "Rechercher un module" }),
+      "zzzzzz",
+    );
+
+    expect(screen.getByText("Aucun module ne correspond")).toBeInTheDocument();
+  });
+
+  it("hiérarchise les titres : un h1, des h2 et des h3", () => {
     renderHome();
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(
       screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent),
-    ).toEqual(["Prix moyen par département", "Les thèmes", "Sous le capot"]);
+    ).toEqual([
+      "Prix moyen par département",
+      "Explorer les données",
+      "Sous le capot",
+    ]);
   });
 
   it("affiche les statistiques et les classements issus des données en direct", async () => {
