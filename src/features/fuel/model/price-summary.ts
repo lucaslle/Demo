@@ -5,6 +5,15 @@ export type PriceSummary = {
   spread: number;
 };
 
+export const FULL_TANK_LITERS = 50;
+
+// Économie réalisée sur un plein en choisissant le prix le plus bas plutôt que
+// le prix moyen de la zone.
+export const computeFullTankSavings = (
+  summary: PriceSummary,
+  liters = FULL_TANK_LITERS,
+): number => (summary.average - summary.lowest) * liters;
+
 export const summarizePrices = (
   amounts: readonly number[],
 ): PriceSummary | null => {
