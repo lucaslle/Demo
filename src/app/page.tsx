@@ -5,8 +5,10 @@ import {
   ExternalLink,
   Fuel,
   Radio,
+  Scale,
   ServerOff,
   ShieldAlert,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -58,6 +60,20 @@ const MODULES: Module[] = [
     description:
       "Trouvez la station la moins chère autour de vous et comparez les prix de la zone.",
     href: "/carburants/",
+  },
+  {
+    icon: Zap,
+    title: "Recharge électrique",
+    description:
+      "Plus de 160 000 points de charge : puissance, prises, tarif affiché et itinéraire jusqu'à la borne.",
+    href: "/recharge/",
+  },
+  {
+    icon: Scale,
+    title: "Comparateur",
+    description:
+      "Carburant ou électrique ? Ce que coûte un trajet, aux prix réels du jour et à vos hypothèses.",
+    href: "/comparateur/",
   },
   {
     icon: Dumbbell,

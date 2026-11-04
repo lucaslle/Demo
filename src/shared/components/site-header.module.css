@@ -66,8 +66,27 @@
   white-space: nowrap;
 }
 
-@media (max-width: 36rem) {
+@media (max-width: 56rem) {
   .hideOnMobile {
     display: none;
+  }
+}
+
+@media (max-width: 40rem) {
+  .brandName {
+    display: none;
+  }
+
+  .inner {
+    gap: 0.5rem;
+  }
+
+  .nav {
+    gap: 0;
+  }
+
+  .navLink {
+    padding: 0 0.5rem;
+    font-size: 0.8125rem;
   }
 }

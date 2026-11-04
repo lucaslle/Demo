@@ -11,11 +11,13 @@ export const SiteHeader = () => (
     <div className={styles.inner}>
       <Link href="/" className={styles.brand}>
         <BrandLogo />
-        <span>{SITE_NAME}</span>
+        <span className={styles.brandName}>{SITE_NAME}</span>
       </Link>
 
       <nav aria-label="Navigation principale" className={styles.nav}>
         <NavLink href="/carburants/">Carburants</NavLink>
+        <NavLink href="/recharge/">Recharge</NavLink>
+        <NavLink href="/comparateur/">Comparateur</NavLink>
         <a
           className={`${styles.navLink} ${styles.hideOnMobile}`}
           href={REPOSITORY_URL}
