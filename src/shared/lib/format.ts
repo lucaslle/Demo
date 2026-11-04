@@ -27,6 +27,7 @@ export const splitPrice = (
 const wholeEuroFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
   currency: "EUR",
+  useGrouping: "always",
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
