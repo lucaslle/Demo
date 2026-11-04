@@ -17,11 +17,8 @@
   gap: 0.5rem;
 }
 
-.mainPrice strong {
-  font-size: 1.625rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+.mainPrice {
+  color: var(--brand-text);
 }
 
 .fuelName {

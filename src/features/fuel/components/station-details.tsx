@@ -1,3 +1,4 @@
+import { PriceDisplay } from "@/shared/components/price-display";
 import { formatPrice } from "@/shared/lib/format";
 import type { DisplayedStation } from "../model/displayed-station";
 import { FUEL_LABELS, FUEL_TYPES, type FuelType } from "../model/fuel-types";
@@ -28,7 +29,7 @@ export const StationDetails = ({
     <div className={styles.details}>
       <TierChip tier={tier} />
       <p className={styles.mainPrice}>
-        <strong>{formatPrice(price.amount)}</strong>
+        <PriceDisplay amount={price.amount} size="lg" />
         <span className={styles.fuelName}>{FUEL_LABELS[fuel]}</span>
       </p>
       <p className={styles.address}>

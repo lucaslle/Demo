@@ -1,4 +1,4 @@
-import { formatPrice } from "@/shared/lib/format";
+import { PriceDisplay } from "@/shared/components/price-display";
 import type { DisplayedStation } from "../model/displayed-station";
 import { PriceFreshness } from "./price-freshness";
 import styles from "./station-list.module.css";
@@ -10,6 +10,9 @@ type StationListProps = {
   now: Date;
   onSelectStation: (stationId: number) => void;
 };
+
+const formatRank = (index: number): string =>
+  String(index + 1).padStart(2, "0");
 
 export const StationList = ({
   displayedStations,
@@ -26,16 +29,17 @@ export const StationList = ({
           <button
             type="button"
             className={styles.item}
+            data-tier={tier}
             aria-current={isSelected ? "true" : undefined}
             onClick={() => onSelectStation(station.id)}
           >
             <span className={styles.rank} aria-hidden="true">
-              {index + 1}
+              {formatRank(index)}
             </span>
             <span className={styles.body}>
               <span className={styles.top}>
                 <span className={styles.price}>
-                  {formatPrice(price.amount)}
+                  <PriceDisplay amount={price.amount} size="md" />
                 </span>
                 <TierChip tier={tier} />
               </span>

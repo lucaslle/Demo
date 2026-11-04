@@ -18,7 +18,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import { useResolvedTheme } from "@/shared/hooks/use-resolved-theme";
-import { formatPrice } from "@/shared/lib/format";
+import { formatPrice, splitPrice } from "@/shared/lib/format";
 import type { DisplayedStation } from "../model/displayed-station";
 import type { FuelType } from "../model/fuel-types";
 import type { PriceTier } from "../model/price-tier";
@@ -38,13 +38,20 @@ const LOCATE_TIMEOUT_IN_MS = 10_000;
 const SELECTED_MARKER_Z_OFFSET = 1000;
 const CHEAPEST_MARKER_Z_OFFSET = 500;
 
-const buildPriceIcon = (label: string, tier: PriceTier, isSelected: boolean) =>
-  divIcon({
+const buildPriceIcon = (
+  amount: number,
+  tier: PriceTier,
+  isSelected: boolean,
+) => {
+  const { main, lastDigit } = splitPrice(amount);
+
+  return divIcon({
     className: `price-marker price-marker--${tier}${isSelected ? " price-marker--selected" : ""}`,
-    html: `<span class="price-marker__label">${label}</span>`,
+    html: `<span class="price-marker__label">${main}<sup>${lastDigit}</sup></span>`,
     iconSize: [78, 30],
     iconAnchor: [39, 38],
   });
+};
 
 type ViewportReporterProps = {
   onViewportChange: (viewport: Viewport) => void;
@@ -99,8 +106,8 @@ const StationMarker = ({
   const priceLabel = formatPrice(price.amount);
 
   const icon = useMemo(
-    () => buildPriceIcon(priceLabel, tier, isSelected),
-    [priceLabel, tier, isSelected],
+    () => buildPriceIcon(price.amount, tier, isSelected),
+    [price.amount, tier, isSelected],
   );
 
   const eventHandlers = useMemo(

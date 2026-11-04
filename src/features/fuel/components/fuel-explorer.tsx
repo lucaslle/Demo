@@ -16,10 +16,12 @@ import { buildDisplayedStations } from "../model/displayed-station";
 import { FUEL_LABELS, type FuelType } from "../model/fuel-types";
 import { summarizePrices } from "../model/price-summary";
 import type { Viewport } from "../model/viewport";
+import { BestPriceCard } from "./best-price-card";
 import styles from "./fuel-explorer.module.css";
 import { FuelChips } from "./fuel-chips";
 import { ListSkeleton } from "./list-skeleton";
-import { PriceStats } from "./price-stats";
+import { PriceDistribution } from "./price-distribution";
+import { SavingsCard } from "./savings-card";
 import { StationList } from "./station-list";
 import { StationMap } from "./station-map";
 
@@ -111,9 +113,23 @@ export const FuelExplorer = () => {
       <div className={styles.top}>
         <h1 className={styles.title}>Prix des carburants</h1>
         <FuelChips value={fuel} onChange={handleFuelChange} />
-        {priceSummary !== null && !hasError && (
-          <PriceStats summary={priceSummary} />
-        )}
+        {cheapestStation !== undefined &&
+          priceSummary !== null &&
+          !hasError && (
+            <>
+              <BestPriceCard
+                displayedStation={cheapestStation}
+                fuel={fuel}
+                onShowOnMap={setSelectedStationId}
+              />
+              <div className={styles.distribution}>
+                <PriceDistribution
+                  amounts={displayedStations.map(({ price }) => price.amount)}
+                  summary={priceSummary}
+                />
+              </div>
+            </>
+          )}
         <p className={styles.summary} role="status" aria-live="polite">
           {summary}
         </p>
@@ -133,6 +149,9 @@ export const FuelExplorer = () => {
           onDeselectStation={handleDeselectStation}
           onViewportChange={setViewport}
         />
+        {priceSummary !== null && !hasError && (
+          <SavingsCard summary={priceSummary} />
+        )}
       </div>
 
       <section
