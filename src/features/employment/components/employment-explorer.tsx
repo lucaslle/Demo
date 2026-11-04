@@ -23,10 +23,13 @@ import {
 } from "../hooks/use-employment-data";
 import { useEmploymentUrlState } from "../hooks/use-employment-url-state";
 import {
+  BRANCHES,
   computeChange,
+  findBranchByCode,
   findSectorByKey,
   INDICATOR_LABELS,
   INDICATORS,
+  INFORMATICS_BRANCH_CODE,
   QUARTERS_IN_FIVE_YEARS,
   QUARTERS_PER_YEAR,
   SECTORS,
@@ -35,6 +38,7 @@ import {
 } from "../model/employment";
 import {
   DEFAULT_TERRITORY,
+  FRANCE_CODE,
   findTerritory,
   formatTerritoryLabel,
   TERRITORIES,
@@ -48,9 +52,20 @@ const INDICATOR_OPTIONS = INDICATORS.map((indicator) => ({
   label: INDICATOR_LABELS[indicator],
 }));
 
-const SECTOR_OPTIONS = [
+const INFORMATICS_KEY = "informatique";
+// Aucune puce cochée : une autre branche est choisie dans la liste déroulante.
+const OTHER_BRANCH_KEY = "autre-branche";
+
+const GRAND_SECTOR_OPTIONS = [
   { value: ALL_SECTORS_KEY, label: "Tous les secteurs" },
   ...SECTORS.map(({ key, label }) => ({ value: key, label })),
+];
+
+// L'informatique n'existe pas parmi les grands secteurs : elle vient du jeu de
+// données par branche, disponible pour la France entière.
+const NATIONAL_SECTOR_OPTIONS = [
+  ...GRAND_SECTOR_OPTIONS,
+  { value: INFORMATICS_KEY, label: "Informatique" },
 ];
 
 const formatIndicatorValue = (indicator: Indicator, value: number): string =>
@@ -109,6 +124,7 @@ const describeSeries = (
 
 export const EmploymentExplorer = () => {
   const territorySelectId = useId();
+  const branchSelectId = useId();
   const { initialState, writeState } = useEmploymentUrlState();
   const [territoryCode, setTerritoryCode] = useState(
     initialState.territory.code,
@@ -116,20 +132,54 @@ export const EmploymentExplorer = () => {
   const [sectorKey, setSectorKey] = useState(
     initialState.sector?.key ?? ALL_SECTORS_KEY,
   );
+  const [branchCode, setBranchCode] = useState<string | null>(
+    initialState.branch?.code ?? null,
+  );
   const [indicator, setIndicator] = useState<Indicator>(initialState.indicator);
 
   const territory = findTerritory(territoryCode) ?? DEFAULT_TERRITORY;
-  const sector = findSectorByKey(sectorKey) ?? null;
+  const isNational = territory.code === FRANCE_CODE;
+  // La branche fine n'existe qu'au niveau national : hors France on retombe sur
+  // les grands secteurs sans perdre le choix si l'on revient à la France.
+  const branch = isNational ? (findBranchByCode(branchCode) ?? null) : null;
+  const sector = branch === null ? (findSectorByKey(sectorKey) ?? null) : null;
   const territoryLabel = formatTerritoryLabel(territory);
 
-  const seriesQuery = useEmploymentSeries(territory, sector);
+  const seriesQuery = useEmploymentSeries(territory, sector, branch);
   const points = useMemo(() => seriesQuery.data ?? [], [seriesQuery.data]);
   const latest = points[points.length - 1];
   const breakdownQuery = useSectorBreakdown(territory, latest?.date ?? null);
 
   useEffect(() => {
-    writeState({ territory, sector, indicator });
-  }, [territory, sector, indicator, writeState]);
+    writeState({ territory, sector, branch, indicator });
+  }, [territory, sector, branch, indicator, writeState]);
+
+  const chipValue =
+    branch === null
+      ? sectorKey
+      : branch.code === INFORMATICS_BRANCH_CODE
+        ? INFORMATICS_KEY
+        : OTHER_BRANCH_KEY;
+
+  const handleChipChange = (nextKey: string) => {
+    if (nextKey === INFORMATICS_KEY) {
+      setBranchCode(INFORMATICS_BRANCH_CODE);
+      setSectorKey(ALL_SECTORS_KEY);
+      return;
+    }
+    setBranchCode(null);
+    setSectorKey(nextKey);
+  };
+
+  const handleBranchSelect = (nextCode: string) => {
+    setBranchCode(nextCode === "" ? null : nextCode);
+    setSectorKey(ALL_SECTORS_KEY);
+  };
+
+  const handleBreakdownClick = (clickedKey: string) => {
+    setBranchCode(null);
+    setSectorKey(sector?.key === clickedKey ? ALL_SECTORS_KEY : clickedKey);
+  };
 
   const yearlyChange = computeChange(points, indicator, QUARTERS_PER_YEAR);
   const fiveYearChange = computeChange(
@@ -155,7 +205,8 @@ export const EmploymentExplorer = () => {
         <p className={styles.lead}>
           Effectifs salariés et masse salariale du secteur privé, par
           département et par grand secteur, trimestre après trimestre depuis
-          2001.
+          2001. Pour la France entière, le détail va jusqu&apos;à la branche
+          d&apos;activité : informatique, santé, finance…
         </p>
       </header>
 
@@ -183,11 +234,35 @@ export const EmploymentExplorer = () => {
         />
         <ChipGroup
           legend="Secteur"
-          options={SECTOR_OPTIONS}
-          value={sectorKey}
-          onChange={setSectorKey}
+          options={isNational ? NATIONAL_SECTOR_OPTIONS : GRAND_SECTOR_OPTIONS}
+          value={chipValue}
+          onChange={handleChipChange}
           layout="wrap"
         />
+        {isNational ? (
+          <div className={styles.field}>
+            <label htmlFor={branchSelectId}>
+              Autre branche d&apos;activité
+            </label>
+            <select
+              id={branchSelectId}
+              value={branch?.code ?? ""}
+              onChange={(event) => handleBranchSelect(event.target.value)}
+            >
+              <option value="">Choisir une branche…</option>
+              {BRANCHES.map((option) => (
+                <option key={option.code} value={option.code}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <p className={styles.note}>
+            Le détail par branche (informatique, santé, finance…) n&apos;est
+            publié que pour la France entière.
+          </p>
+        )}
       </section>
 
       {seriesQuery.isError && seriesQuery.data === undefined ? (
@@ -258,7 +333,8 @@ export const EmploymentExplorer = () => {
             </h2>
             <p className={styles.caption}>
               {INDICATOR_LABELS[indicator]} · {territoryLabel}
-              {sector !== null ? ` · ${sector.label}` : ""} · corrigé des
+              {sector !== null ? ` · ${sector.label}` : ""}
+              {branch !== null ? ` · ${branch.label}` : ""} · corrigé des
               variations saisonnières
             </p>
             <EmploymentChart points={points} indicator={indicator} />
@@ -334,13 +410,7 @@ export const EmploymentExplorer = () => {
                           type="button"
                           className={styles.sectorRow}
                           aria-pressed={sector?.key === share.sector.key}
-                          onClick={() =>
-                            setSectorKey(
-                              sector?.key === share.sector.key
-                                ? ALL_SECTORS_KEY
-                                : share.sector.key,
-                            )
-                          }
+                          onClick={() => handleBreakdownClick(share.sector.key)}
                         >
                           <span className={styles.sectorName}>
                             {share.sector.label}

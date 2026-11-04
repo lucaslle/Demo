@@ -5,7 +5,13 @@ import {
   findTerritory,
   type Territory,
 } from "../model/territories";
-import type { QuarterPoint, Sector, SectorShare } from "../model/employment";
+import {
+  findBranchByCode,
+  type Branch,
+  type QuarterPoint,
+  type Sector,
+  type SectorShare,
+} from "../model/employment";
 import {
   parseQuarterRows,
   parseSectorRows,
@@ -18,6 +24,11 @@ import {
 // masse salariale trimestriels du secteur privé, par département × grand secteur.
 const DATASET_URL =
   "https://open.urssaf.fr/api/explore/v2.1/catalog/datasets/effectifs-salaries-et-masse-salariale-du-secteur-prive-par-departement-x-grand-s/records";
+
+// Même source, mais France entière × branche d'activité fine (NAF niveau 38) :
+// c'est là que figurent l'informatique, la santé, la finance, etc.
+const BRANCH_DATASET_URL =
+  "https://open.urssaf.fr/api/explore/v2.1/catalog/datasets/effectifs-salaries-et-masse-salariale-du-secteur-prive-france-entiere-x-na88/records";
 
 // 100 trimestres = 25 ans d'historique, la limite d'une page de l'API.
 export const QUARTERS_TO_FETCH = 100;
@@ -49,19 +60,38 @@ const buildScopeConditions = ({ territory, sector }: Scope): string[] => {
   return conditions;
 };
 
-const buildUrl = (params: Record<string, string>): string =>
-  `${DATASET_URL}?${new URLSearchParams(params).toString()}`;
+const buildUrl = (baseUrl: string, params: Record<string, string>): string =>
+  `${baseUrl}?${new URLSearchParams(params).toString()}`;
 
-type FetchSeriesParams = Scope & { signal?: AbortSignal };
+type FetchSeriesParams = Scope & {
+  branch?: Branch | null;
+  signal?: AbortSignal;
+};
+
+const buildBranchCondition = (branch: Branch): string => {
+  if (findBranchByCode(branch.code) === undefined) {
+    throw new Error(`Branche invalide : ${branch.code}`);
+  }
+  return `secteur_na38i = "${branch.code} ${branch.name}"`;
+};
 
 export const fetchEmploymentSeries = async ({
   territory,
   sector,
+  branch = null,
   signal,
 }: FetchSeriesParams): Promise<QuarterPoint[]> => {
-  const conditions = buildScopeConditions({ territory, sector });
+  if (branch !== null && territory.code !== FRANCE_CODE) {
+    throw new Error(
+      "Le détail par branche n'existe que pour la France entière",
+    );
+  }
+  const conditions =
+    branch === null
+      ? buildScopeConditions({ territory, sector })
+      : [buildBranchCondition(branch)];
   const response = await fetchJson(
-    buildUrl({
+    buildUrl(branch === null ? DATASET_URL : BRANCH_DATASET_URL, {
       select: QUARTER_SELECT,
       group_by: QUARTER_GROUP_BY,
       order_by: "dernier_jour_du_trimestre desc",
@@ -96,7 +126,7 @@ export const fetchSectorBreakdown = async ({
     `dernier_jour_du_trimestre = date'${date}'`,
   ];
   const response = await fetchJson(
-    buildUrl({
+    buildUrl(DATASET_URL, {
       select: SECTOR_SELECT,
       group_by: "grand_secteur_d_activite",
       order_by: "e desc",

@@ -55,6 +55,12 @@
   border-radius: var(--radius-md);
 }
 
+.note {
+  max-width: 42rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
 .results {
   display: grid;
   gap: 1.25rem;

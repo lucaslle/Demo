@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findSectorByKey } from "./employment";
+import { findBranchByCode, findSectorByKey } from "./employment";
 import { DEFAULT_TERRITORY, findTerritory } from "./territories";
 import { buildEmploymentSearch, parseEmploymentUrlState } from "./url-state";
 
@@ -11,14 +11,29 @@ describe("parseEmploymentUrlState", () => {
     expect(parse("?territoire=75&secteur=gs3&indicateur=payroll")).toEqual({
       territory: findTerritory("75"),
       sector: findSectorByKey("gs3"),
+      branch: null,
       indicator: "payroll",
     });
+  });
+
+  it("lit la branche d'activité pour la France entière", () => {
+    const state = parse("?territoire=FR&secteur=gs3&branche=JC");
+
+    expect(state.branch).toEqual(findBranchByCode("JC"));
+    expect(state.branch?.name).toBe("Activités informatiques");
+    expect(state.sector).toBeNull();
+  });
+
+  it("ignore la branche hors France et une branche inconnue", () => {
+    expect(parse("?territoire=75&branche=JC").branch).toBeNull();
+    expect(parse("?territoire=FR&branche=ZZ").branch).toBeNull();
   });
 
   it("revient aux valeurs par défaut quand l'URL est vide ou invalide", () => {
     const defaults = {
       territory: DEFAULT_TERRITORY,
       sector: null,
+      branch: null,
       indicator: "employees",
     };
 
@@ -36,6 +51,7 @@ describe("buildEmploymentSearch", () => {
     const state = {
       territory: findTerritory("2A") ?? DEFAULT_TERRITORY,
       sector: findSectorByKey("gs5") ?? null,
+      branch: null,
       indicator: "payroll" as const,
     };
 
@@ -50,8 +66,23 @@ describe("buildEmploymentSearch", () => {
       buildEmploymentSearch({
         territory: DEFAULT_TERRITORY,
         sector: null,
+        branch: null,
         indicator: "employees",
       }),
     ).toBe("?territoire=FR&secteur=tous&indicateur=employees");
+  });
+
+  it("écrit et relit la branche d'activité", () => {
+    const state = {
+      territory: DEFAULT_TERRITORY,
+      sector: null,
+      branch: findBranchByCode("JC") ?? null,
+      indicator: "employees" as const,
+    };
+
+    expect(buildEmploymentSearch(state)).toBe(
+      "?territoire=FR&secteur=tous&indicateur=employees&branche=JC",
+    );
+    expect(parse(buildEmploymentSearch(state))).toEqual(state);
   });
 });

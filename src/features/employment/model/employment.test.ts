@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  BRANCHES,
   computeChange,
+  findBranchByCode,
   findSectorByKey,
+  INFORMATICS_BRANCH_CODE,
   findSectorByValue,
   formatQuarterLabel,
   isIndicator,
@@ -20,6 +23,28 @@ const point = (
   label: `T${(index % 4) + 1}`,
   employees,
   payroll,
+});
+
+describe("BRANCHES", () => {
+  it("a des codes uniques et des intitulés affichés avec une majuscule", () => {
+    const codes = BRANCHES.map(({ code }) => code);
+
+    expect(new Set(codes).size).toBe(codes.length);
+    for (const { label } of BRANCHES) {
+      expect(label.charAt(0)).toBe(label.charAt(0).toUpperCase());
+    }
+    expect(findBranchByCode("MC")?.label).toBe(
+      "Autres activités scientifiques et techniques",
+    );
+  });
+
+  it("contient l'informatique, absente des grands secteurs", () => {
+    expect(findBranchByCode(INFORMATICS_BRANCH_CODE)?.name).toBe(
+      "Activités informatiques",
+    );
+    expect(findBranchByCode("XX")).toBeUndefined();
+    expect(findBranchByCode(null)).toBeUndefined();
+  });
 });
 
 describe("computeChange", () => {

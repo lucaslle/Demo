@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { findSectorByKey } from "../model/employment";
+import { findBranchByCode, findSectorByKey } from "../model/employment";
 import { DEFAULT_TERRITORY, findTerritory } from "../model/territories";
 import {
   fetchEmploymentSeries,
@@ -49,6 +49,43 @@ describe("fetchEmploymentSeries", () => {
     expect(urlOf(fetchMock).searchParams.get("where")).toBe(
       'code_departement = "75" and grand_secteur_d_activite = "GS3 Commerce"',
     );
+  });
+
+  it("interroge le jeu par branche pour l'informatique", async () => {
+    const fetchMock = stubResults([]);
+
+    await fetchEmploymentSeries({
+      territory: DEFAULT_TERRITORY,
+      sector: null,
+      branch: findBranchByCode("JC") ?? null,
+    });
+
+    const url = urlOf(fetchMock);
+    expect(url.pathname).toContain("france-entiere-x-na88");
+    expect(url.searchParams.get("where")).toBe(
+      'secteur_na38i = "JC Activités informatiques"',
+    );
+  });
+
+  it("refuse une branche hors France entière ou inconnue", async () => {
+    const fetchMock = stubResults([]);
+    const informatics = findBranchByCode("JC") ?? null;
+
+    await expect(
+      fetchEmploymentSeries({
+        territory: paris ?? DEFAULT_TERRITORY,
+        sector: null,
+        branch: informatics,
+      }),
+    ).rejects.toThrow("France entière");
+    await expect(
+      fetchEmploymentSeries({
+        territory: DEFAULT_TERRITORY,
+        sector: null,
+        branch: { code: 'JC" or 1=1 or "', name: "x", label: "x" },
+      }),
+    ).rejects.toThrow("Branche invalide");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("renvoie la série triée du plus ancien au plus récent", async () => {

@@ -3,7 +3,7 @@ import {
   fetchEmploymentSeries,
   fetchSectorBreakdown,
 } from "../api/fetch-employment";
-import type { Sector } from "../model/employment";
+import type { Branch, Sector } from "../model/employment";
 import type { Territory } from "../model/territories";
 
 // Les données Urssaf sont publiées au trimestre : inutile de les rafraîchir souvent.
@@ -11,8 +11,18 @@ const SIX_HOURS_IN_MS = 6 * 60 * 60 * 1000;
 
 export const employmentKeys = {
   all: ["employment"] as const,
-  series: (territoryCode: string, sectorKey: string | null) =>
-    [...employmentKeys.all, "series", territoryCode, sectorKey] as const,
+  series: (
+    territoryCode: string,
+    sectorKey: string | null,
+    branchCode: string | null,
+  ) =>
+    [
+      ...employmentKeys.all,
+      "series",
+      territoryCode,
+      sectorKey,
+      branchCode,
+    ] as const,
   breakdown: (territoryCode: string, date: string | null) =>
     [...employmentKeys.all, "breakdown", territoryCode, date] as const,
 };
@@ -22,11 +32,16 @@ export const employmentKeys = {
 export const useEmploymentSeries = (
   territory: Territory,
   sector: Sector | null,
+  branch: Branch | null,
 ) =>
   useQuery({
-    queryKey: employmentKeys.series(territory.code, sector?.key ?? null),
+    queryKey: employmentKeys.series(
+      territory.code,
+      sector?.key ?? null,
+      branch?.code ?? null,
+    ),
     queryFn: ({ signal }) =>
-      fetchEmploymentSeries({ territory, sector, signal }),
+      fetchEmploymentSeries({ territory, sector, branch, signal }),
     staleTime: SIX_HOURS_IN_MS,
     placeholderData: keepPreviousData,
   });
