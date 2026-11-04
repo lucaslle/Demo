@@ -1,5 +1,12 @@
 export type PriceTier = "cheapest" | "low" | "medium" | "high";
 
+export const TIER_LABELS: Record<PriceTier, string> = {
+  cheapest: "Le moins cher",
+  low: "Bon prix",
+  medium: "Prix moyen",
+  high: "Prix élevé",
+};
+
 export type PriceRange = {
   min: number;
   max: number;

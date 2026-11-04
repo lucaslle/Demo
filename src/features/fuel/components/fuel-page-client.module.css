@@ -1,0 +1,8 @@
+.loading {
+  display: grid;
+  place-items: center;
+  width: min(100%, 100rem);
+  height: calc(100dvh - var(--header-height));
+  margin-inline: auto;
+  padding: 1rem;
+}

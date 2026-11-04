@@ -7,6 +7,7 @@ import {
   type Map as LeafletMap,
   type Marker as LeafletMarker,
 } from "leaflet";
+import { LoaderCircle, LocateFixed } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   MapContainer,
@@ -16,6 +17,7 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
+import { useResolvedTheme } from "@/shared/hooks/use-resolved-theme";
 import { formatPrice } from "@/shared/lib/format";
 import type { DisplayedStation } from "../model/displayed-station";
 import type { FuelType } from "../model/fuel-types";
@@ -24,10 +26,11 @@ import { MAP_MAX_ZOOM, MAP_MIN_ZOOM } from "../model/url-state";
 import type { MapView, Viewport } from "../model/viewport";
 import { StationDetails } from "./station-details";
 
-// Fond de carte Plan IGN (Géoplateforme) : gratuit, sans clé.
-const IGN_TILES_URL =
+// Fond de carte Plan IGN (Géoplateforme) : officiel, gratuit, sans clé. Le mode
+// sombre est obtenu en retraitant les tuiles en CSS (voir fuel-map.css).
+const TILE_URL =
   "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}";
-const IGN_ATTRIBUTION =
+const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.ign.fr/">IGN</a> – Géoplateforme';
 
 const LOCATE_ZOOM = 14;
@@ -39,8 +42,8 @@ const buildPriceIcon = (label: string, tier: PriceTier, isSelected: boolean) =>
   divIcon({
     className: `price-marker price-marker--${tier}${isSelected ? " price-marker--selected" : ""}`,
     html: `<span class="price-marker__label">${label}</span>`,
-    iconSize: [76, 30],
-    iconAnchor: [38, 38],
+    iconSize: [78, 30],
+    iconAnchor: [39, 38],
   });
 
 type ViewportReporterProps = {
@@ -162,6 +165,7 @@ export const StationMap = ({
   onDeselectStation,
   onViewportChange,
 }: StationMapProps) => {
+  const theme = useResolvedTheme();
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [locateError, setLocateError] = useState<string | null>(null);
@@ -196,7 +200,11 @@ export const StationMap = ({
 
   return (
     <div
-      className="fuel-map-wrapper"
+      className={
+        theme === "dark"
+          ? "fuel-map-wrapper fuel-map-wrapper--dark"
+          : "fuel-map-wrapper"
+      }
       role="region"
       aria-label="Carte des stations-service"
     >
@@ -209,8 +217,8 @@ export const StationMap = ({
         maxZoom={MAP_MAX_ZOOM}
       >
         <TileLayer
-          url={IGN_TILES_URL}
-          attribution={IGN_ATTRIBUTION}
+          url={TILE_URL}
+          attribution={TILE_ATTRIBUTION}
           maxZoom={MAP_MAX_ZOOM}
         />
         <ViewportReporter onViewportChange={onViewportChange} />
@@ -226,20 +234,31 @@ export const StationMap = ({
           />
         ))}
       </MapContainer>
+
       <div className="fuel-map-controls">
-        <button
-          type="button"
-          className="fuel-map-controls__locate"
-          onClick={locateUser}
-          disabled={map === null || isLocating}
-        >
-          {isLocating ? "Localisation…" : "Me localiser"}
-        </button>
         {locateError !== null && (
           <p className="fuel-map-controls__error" role="alert">
             {locateError}
           </p>
         )}
+        <button
+          type="button"
+          className="fuel-map-controls__locate"
+          onClick={locateUser}
+          disabled={map === null || isLocating}
+          aria-label={isLocating ? "Localisation en cours" : "Me localiser"}
+          title="Me localiser"
+        >
+          {isLocating ? (
+            <LoaderCircle
+              className="fuel-map-controls__spinner"
+              size={22}
+              aria-hidden="true"
+            />
+          ) : (
+            <LocateFixed size={22} aria-hidden="true" />
+          )}
+        </button>
       </div>
     </div>
   );

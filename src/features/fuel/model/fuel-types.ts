@@ -16,7 +16,7 @@ export const FUEL_LABELS: Record<FuelType, string> = {
   e10: "SP95-E10",
   sp98: "SP98",
   sp95: "SP95",
-  e85: "E85 (superéthanol)",
+  e85: "E85",
   gplc: "GPLc",
 };
 

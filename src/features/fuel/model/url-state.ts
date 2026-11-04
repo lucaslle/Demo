@@ -30,7 +30,10 @@ const readNumberInRange = (
     : fallback;
 };
 
-export const parseFuelUrlState = (params: SearchParamsReader): FuelUrlState => {
+export const parseFuelUrlState = (
+  params: SearchParamsReader,
+  fallbackFuel: FuelType = DEFAULT_FUEL,
+): FuelUrlState => {
   const rawFuel = params.get("carburant");
 
   return {
@@ -44,7 +47,7 @@ export const parseFuelUrlState = (params: SearchParamsReader): FuelUrlState => {
         DEFAULT_VIEW.zoom,
       ),
     },
-    fuel: isFuelType(rawFuel) ? rawFuel : DEFAULT_FUEL,
+    fuel: isFuelType(rawFuel) ? rawFuel : fallbackFuel,
   };
 };
 

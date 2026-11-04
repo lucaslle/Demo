@@ -23,6 +23,15 @@ describe("parseFuelUrlState", () => {
     });
   });
 
+  it("utilise le carburant de repli quand l'URL n'en précise pas", () => {
+    expect(parseFuelUrlState(new URLSearchParams(""), "gazole").fuel).toBe(
+      "gazole",
+    );
+    expect(
+      parseFuelUrlState(new URLSearchParams("?carburant=sp98"), "gazole").fuel,
+    ).toBe("sp98");
+  });
+
   it("ignore les paramètres vides", () => {
     expect(parse("?lat=&lng=&z=").view).toEqual(DEFAULT_VIEW);
   });

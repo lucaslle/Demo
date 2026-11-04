@@ -1,10 +1,12 @@
 "use client";
 
+import { SearchX, TriangleAlert, ZoomIn } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { describeApiError } from "@/shared/api/describe-api-error";
 import { StatusMessage } from "@/shared/components/status-message";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { formatPrice } from "@/shared/lib/format";
+import { usePreferencesStore } from "@/shared/stores/preferences-store";
 import { useFuelUrlState } from "../hooks/use-fuel-url-state";
 import {
   MIN_ZOOM_FOR_STATIONS,
@@ -12,9 +14,12 @@ import {
 } from "../hooks/use-stations-in-viewport";
 import { buildDisplayedStations } from "../model/displayed-station";
 import { FUEL_LABELS, type FuelType } from "../model/fuel-types";
+import { summarizePrices } from "../model/price-summary";
 import type { Viewport } from "../model/viewport";
 import styles from "./fuel-explorer.module.css";
-import { FuelSelect } from "./fuel-select";
+import { FuelChips } from "./fuel-chips";
+import { ListSkeleton } from "./list-skeleton";
+import { PriceStats } from "./price-stats";
 import { StationList } from "./station-list";
 import { StationMap } from "./station-map";
 
@@ -22,6 +27,9 @@ const VIEWPORT_DEBOUNCE_IN_MS = 300;
 
 export const FuelExplorer = () => {
   const { initialState, writeState } = useFuelUrlState();
+  const setPreferredFuel = usePreferencesStore(
+    (state) => state.setPreferredFuel,
+  );
   const [fuel, setFuel] = useState<FuelType>(initialState.fuel);
   const [viewport, setViewport] = useState<Viewport | null>(null);
   const [selectedStationId, setSelectedStationId] = useState<number | null>(
@@ -47,6 +55,10 @@ export const FuelExplorer = () => {
       ),
     [stations, fuel, debouncedViewport],
   );
+  const priceSummary = useMemo(
+    () => summarizePrices(displayedStations.map(({ price }) => price.amount)),
+    [displayedStations],
+  );
   const now = useMemo(
     () => new Date(stationsQuery.dataUpdatedAt),
     [stationsQuery.dataUpdatedAt],
@@ -68,6 +80,7 @@ export const FuelExplorer = () => {
 
   const handleFuelChange = (nextFuel: FuelType) => {
     setFuel(nextFuel);
+    setPreferredFuel(nextFuel);
     setSelectedStationId(null);
   };
 
@@ -94,19 +107,22 @@ export const FuelExplorer = () => {
   });
 
   return (
-    <div className={styles.explorer}>
-      <div className={styles.toolbar}>
-        <FuelSelect value={fuel} onChange={handleFuelChange} />
+    <div className={styles.layout}>
+      <div className={styles.top}>
+        <h1 className={styles.title}>Prix des carburants</h1>
+        <FuelChips value={fuel} onChange={handleFuelChange} />
+        {priceSummary !== null && !hasError && (
+          <PriceStats summary={priceSummary} />
+        )}
+        <p className={styles.summary} role="status" aria-live="polite">
+          {summary}
+        </p>
         <a className={styles.skipToList} href="#liste-stations">
           Aller à la liste des stations
         </a>
       </div>
 
-      <p className={styles.summary} role="status" aria-live="polite">
-        {summary}
-      </p>
-
-      <div className={styles.layout}>
+      <div className={styles.map}>
         <StationMap
           initialView={initialState.view}
           displayedStations={displayedStations}
@@ -117,66 +133,73 @@ export const FuelExplorer = () => {
           onDeselectStation={handleDeselectStation}
           onViewportChange={setViewport}
         />
-
-        <section
-          id="liste-stations"
-          className={styles.listPanel}
-          aria-labelledby="titre-liste-stations"
-        >
-          <h2 id="titre-liste-stations" className={styles.listTitle}>
-            Stations dans la zone ({FUEL_LABELS[fuel]})
-          </h2>
-
-          {isTruncated && !hasError && (
-            <p className={styles.truncatedNotice}>
-              {totalCount} stations dans la zone chargée : seules les moins
-              chères sont affichées. Zoomez pour affiner.
-            </p>
-          )}
-
-          {!isZoomSufficient ? (
-            <StatusMessage variant="info" title="Zoomez sur la carte">
-              Les prix s&apos;affichent à partir du niveau de zoom{" "}
-              {MIN_ZOOM_FOR_STATIONS}.
-            </StatusMessage>
-          ) : hasError ? (
-            <StatusMessage
-              variant="error"
-              title="Impossible de charger les prix"
-              action={
-                <button
-                  type="button"
-                  className={styles.retryButton}
-                  onClick={() => {
-                    void stationsQuery.refetch();
-                  }}
-                >
-                  Réessayer
-                </button>
-              }
-            >
-              {describeApiError(stationsQuery.error)}
-            </StatusMessage>
-          ) : isLoading ? (
-            <StatusMessage variant="info" title="Chargement des stations…" />
-          ) : displayedStations.length === 0 ? (
-            <StatusMessage
-              variant="empty"
-              title="Aucune station dans cette zone"
-            >
-              Aucune station ne propose {FUEL_LABELS[fuel]} ici. Déplacez la
-              carte ou choisissez un autre carburant.
-            </StatusMessage>
-          ) : (
-            <StationList
-              displayedStations={displayedStations}
-              selectedStationId={selectedStationId}
-              now={now}
-              onSelectStation={setSelectedStationId}
-            />
-          )}
-        </section>
       </div>
+
+      <section
+        id="liste-stations"
+        className={styles.list}
+        aria-labelledby="titre-liste-stations"
+      >
+        <h2 id="titre-liste-stations" className={styles.listTitle}>
+          Stations dans la zone
+          <span className={styles.listFuel}>{FUEL_LABELS[fuel]}</span>
+        </h2>
+
+        {isTruncated && !hasError && (
+          <p className={styles.truncatedNotice}>
+            {totalCount} stations dans la zone chargée : seules les moins chères
+            sont affichées. Zoomez pour affiner.
+          </p>
+        )}
+
+        {!isZoomSufficient ? (
+          <StatusMessage
+            variant="info"
+            icon={ZoomIn}
+            title="Zoomez sur la carte"
+          >
+            Les prix s&apos;affichent à partir du niveau de zoom{" "}
+            {MIN_ZOOM_FOR_STATIONS}.
+          </StatusMessage>
+        ) : hasError ? (
+          <StatusMessage
+            variant="error"
+            icon={TriangleAlert}
+            title="Impossible de charger les prix"
+            action={
+              <button
+                type="button"
+                className="button button--secondary"
+                onClick={() => {
+                  void stationsQuery.refetch();
+                }}
+              >
+                Réessayer
+              </button>
+            }
+          >
+            {describeApiError(stationsQuery.error)}
+          </StatusMessage>
+        ) : isLoading ? (
+          <ListSkeleton />
+        ) : displayedStations.length === 0 ? (
+          <StatusMessage
+            variant="empty"
+            icon={SearchX}
+            title="Aucune station dans cette zone"
+          >
+            Aucune station ne propose {FUEL_LABELS[fuel]} ici. Déplacez la carte
+            ou choisissez un autre carburant.
+          </StatusMessage>
+        ) : (
+          <StationList
+            displayedStations={displayedStations}
+            selectedStationId={selectedStationId}
+            now={now}
+            onSelectStation={setSelectedStationId}
+          />
+        )}
+      </section>
     </div>
   );
 };
