@@ -1,0 +1,68 @@
+/* Repères de ventes : pastille avec le prix au m², colorée selon l'écart au
+   prix médian de la zone. */
+.dvf-marker {
+  background: none;
+  border: none;
+}
+
+.dvf-marker__label {
+  --dvf-color: var(--border-strong);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--dvf-color);
+  border-radius: 999px;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.dvf-marker__label::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--dvf-color);
+  border-bottom: 0;
+}
+
+.dvf-marker--low .dvf-marker__label {
+  --dvf-color: var(--scale-1);
+}
+
+.dvf-marker--mid .dvf-marker__label {
+  --dvf-color: var(--scale-3);
+}
+
+.dvf-marker--high .dvf-marker__label {
+  --dvf-color: var(--scale-5);
+}
+
+.dvf-marker:hover .dvf-marker__label {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.dvf-marker--selected .dvf-marker__label {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  transform: scale(1.1);
+}
+
+.leaflet-marker-icon:focus-visible .dvf-marker__label {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
