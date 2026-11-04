@@ -19,8 +19,8 @@
 
 /* Mode sombre : les tuiles claires de l'IGN sont inversées puis recolorées. */
 .fuel-map-wrapper--dark .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) saturate(0.55) brightness(0.88)
-    contrast(0.92);
+  filter: invert(1) hue-rotate(190deg) brightness(1.5) contrast(1.15)
+    saturate(0.5);
 }
 
 /* Contrôles Leaflet */
