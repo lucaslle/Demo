@@ -1,0 +1,86 @@
+/* Marqueurs de prix : pastille sombre, le moins cher s'allume. */
+.price-marker {
+  background: none;
+  border: none;
+}
+
+.price-marker__label {
+  --tier-color: var(--good);
+
+  position: relative;
+  display: block;
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--tier-color);
+  border-radius: 0.625rem;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.price-marker__label sup {
+  margin-left: 0.04em;
+  font-size: 0.62em;
+  line-height: 0;
+  vertical-align: 0.55em;
+}
+
+.price-marker__label::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--tier-color);
+  border-bottom: 0;
+}
+
+.price-marker--cheapest .price-marker__label {
+  --tier-color: var(--brand);
+
+  color: var(--brand-contrast);
+  background: var(--brand);
+  box-shadow: var(--glow);
+}
+
+.price-marker--cheapest .price-marker__label::before {
+  content: "★ ";
+}
+
+.price-marker--low .price-marker__label {
+  --tier-color: var(--scale-1);
+}
+
+.price-marker--medium .price-marker__label {
+  --tier-color: var(--scale-3);
+}
+
+.price-marker--high .price-marker__label {
+  --tier-color: var(--scale-5);
+}
+
+.price-marker:hover .price-marker__label {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.price-marker--selected .price-marker__label {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  transform: scale(1.1);
+}
+
+.leaflet-marker-icon:focus-visible .price-marker__label {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}

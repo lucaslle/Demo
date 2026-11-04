@@ -1,0 +1,140 @@
+.map-shell-wrapper {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  min-height: 22rem;
+}
+
+.map-shell {
+  width: 100%;
+  height: 100%;
+  min-height: 24rem;
+  z-index: 0;
+  font-family: var(--font-sans);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* Mode sombre : les tuiles claires de l'IGN sont inversées puis recolorées. */
+.map-shell-wrapper--dark .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(190deg) brightness(1.5) contrast(1.15)
+    saturate(0.5);
+}
+
+/* Contrôles Leaflet */
+.map-shell .leaflet-bar {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.map-shell .leaflet-bar a {
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  color: var(--text);
+  background: var(--surface);
+  border-bottom-color: var(--border);
+}
+
+.map-shell .leaflet-bar a:hover {
+  background: var(--surface-2);
+}
+
+.map-shell .leaflet-control-attribution {
+  padding: 0.125rem 0.5rem;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  border-top-left-radius: var(--radius-sm);
+}
+
+.map-shell .leaflet-control-attribution a {
+  color: var(--brand-text);
+}
+
+/* Fenêtre de détail */
+.map-shell .leaflet-popup-content-wrapper {
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.map-shell .leaflet-popup-tip {
+  background: var(--surface);
+}
+
+.map-shell .leaflet-popup-content {
+  margin: 0.875rem 1rem;
+}
+
+.map-shell a.leaflet-popup-close-button {
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  color: var(--text-muted);
+}
+
+/* Bouton de localisation */
+.map-shell-controls {
+  position: absolute;
+  right: 0.875rem;
+  bottom: 2rem;
+  z-index: 500;
+  display: grid;
+  justify-items: end;
+  gap: 0.5rem;
+}
+
+.map-shell-controls__locate {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  color: var(--brand-contrast);
+  background: var(--brand);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.map-shell-controls__locate:hover:not(:disabled) {
+  background: var(--brand-hover);
+  transform: scale(1.06);
+}
+
+.map-shell-controls__locate:disabled {
+  cursor: progress;
+}
+
+.map-shell-controls__spinner {
+  animation: map-shell-spin 0.9s linear infinite;
+}
+
+.map-shell-controls__error {
+  max-width: 15rem;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--bad);
+  background: var(--surface);
+  border: 1px solid var(--bad);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+@keyframes map-shell-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

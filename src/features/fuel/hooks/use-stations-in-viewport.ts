@@ -1,14 +1,9 @@
 import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useFetchArea } from "@/features/map/hooks/use-fetch-area";
+import type { Bounds } from "@/features/map/model/bounds";
+import type { Viewport } from "@/features/map/model/viewport";
 import { fetchStationsInArea } from "../api/fetch-stations";
-import {
-  areBoundsEqual,
-  needsNewFetchArea,
-  padAndSnapBounds,
-  type Bounds,
-} from "../model/bounds";
 import type { FuelType } from "../model/fuel-types";
-import type { Viewport } from "../model/viewport";
 
 export const MIN_ZOOM_FOR_STATIONS = 10;
 
@@ -27,7 +22,7 @@ export const useStationsInViewport = ({
   viewport,
   fuel,
 }: UseStationsInViewportParams) => {
-  const [fetchArea, setFetchArea] = useState<Bounds | null>(null);
+  const { fetchArea, syncFetchArea } = useFetchArea();
   const isZoomSufficient =
     viewport !== null && viewport.zoom >= MIN_ZOOM_FOR_STATIONS;
 
@@ -41,19 +36,8 @@ export const useStationsInViewport = ({
     placeholderData: keepPreviousData,
   });
 
-  // La zone chargée est plus large que la vue : on ne la recalcule que lorsque
-  // l'utilisateur en sort, pour ne pas relancer d'appel à chaque déplacement.
   if (viewport !== null && isZoomSufficient) {
-    const isTruncated = stationsQuery.data?.isTruncated ?? false;
-    if (
-      fetchArea === null ||
-      needsNewFetchArea(viewport.bounds, fetchArea, isTruncated)
-    ) {
-      const nextFetchArea = padAndSnapBounds(viewport.bounds);
-      if (fetchArea === null || !areBoundsEqual(nextFetchArea, fetchArea)) {
-        setFetchArea(nextFetchArea);
-      }
-    }
+    syncFetchArea(viewport.bounds, stationsQuery.data?.isTruncated ?? false);
   }
 
   return { stationsQuery, isZoomSufficient };

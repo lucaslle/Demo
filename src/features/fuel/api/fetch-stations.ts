@@ -1,5 +1,5 @@
 import { fetchJson } from "@/shared/api/http-client";
-import type { Bounds } from "../model/bounds";
+import type { Bounds } from "@/features/map/model/bounds";
 import type { FuelType } from "../model/fuel-types";
 import type { Station } from "../model/station";
 import {

@@ -1,48 +1,24 @@
 "use client";
 
-import "leaflet/dist/leaflet.css";
-import "./fuel-map.css";
-import {
-  divIcon,
-  type Map as LeafletMap,
-  type Marker as LeafletMarker,
-} from "leaflet";
-import { LoaderCircle, LocateFixed } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-  useMap,
-  useMapEvents,
-} from "react-leaflet";
-import { RouteLayer } from "@/features/route/components/route-layer";
+import "./price-markers.css";
+import { divIcon, type Marker as LeafletMarker } from "leaflet";
+import { memo, useEffect, useMemo, useRef } from "react";
+import { Marker, Popup } from "react-leaflet";
+import { MapShell } from "@/features/map/components/map-shell";
+import type { Viewport } from "@/features/map/model/viewport";
+import type { MapView } from "@/features/map/model/viewport";
 import type { LocationStatus } from "@/features/route/hooks/use-user-location";
 import type { LatLng } from "@/features/route/model/route";
 import {
-  LOCATION_DENIED_MESSAGE,
-  LOCATION_UNAVAILABLE_MESSAGE,
   summarizeRouteState,
   type RouteState,
 } from "@/features/route/model/route-state";
-import { useResolvedTheme } from "@/shared/hooks/use-resolved-theme";
 import { formatPrice, splitPrice } from "@/shared/lib/format";
 import type { DisplayedStation } from "../model/displayed-station";
 import type { FuelType } from "../model/fuel-types";
 import type { PriceTier } from "../model/price-tier";
-import { MAP_MAX_ZOOM, MAP_MIN_ZOOM } from "../model/url-state";
-import type { MapView, Viewport } from "../model/viewport";
 import { StationDetails } from "./station-details";
 
-// Fond de carte Plan IGN (Géoplateforme) : officiel, gratuit, sans clé. Le mode
-// sombre est obtenu en retraitant les tuiles en CSS (voir fuel-map.css).
-const TILE_URL =
-  "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}";
-const TILE_ATTRIBUTION =
-  '&copy; <a href="https://www.ign.fr/">IGN</a> – Géoplateforme';
-
-const LOCATE_ZOOM = 14;
 const SELECTED_MARKER_Z_OFFSET = 1000;
 const CHEAPEST_MARKER_Z_OFFSET = 500;
 
@@ -59,37 +35,6 @@ const buildPriceIcon = (
     iconSize: [78, 30],
     iconAnchor: [39, 38],
   });
-};
-
-type ViewportReporterProps = {
-  onViewportChange: (viewport: Viewport) => void;
-};
-
-const ViewportReporter = ({ onViewportChange }: ViewportReporterProps) => {
-  const map = useMap();
-
-  const reportViewport = useCallback(() => {
-    const bounds = map.getBounds();
-    const center = map.getCenter();
-    onViewportChange({
-      bounds: {
-        south: bounds.getSouth(),
-        west: bounds.getWest(),
-        north: bounds.getNorth(),
-        east: bounds.getEast(),
-      },
-      center: { lat: center.lat, lng: center.lng },
-      zoom: map.getZoom(),
-    });
-  }, [map, onViewportChange]);
-
-  useMapEvents({ moveend: reportViewport });
-
-  useEffect(() => {
-    reportViewport();
-  }, [reportViewport]);
-
-  return null;
 };
 
 type StationMarkerProps = {
@@ -221,108 +166,34 @@ export const StationMap = ({
   onViewportChange,
   onLocate,
 }: StationMapProps) => {
-  const theme = useResolvedTheme();
-  const [map, setMap] = useState<LeafletMap | null>(null);
-  const [hasPressedLocate, setHasPressedLocate] = useState(false);
-  const shouldFlyToUserRef = useRef(false);
-
-  // Après un clic sur « Me localiser », la carte se centre dès que la position
-  // arrive (la demande au navigateur peut prendre quelques secondes).
-  useEffect(() => {
-    if (shouldFlyToUserRef.current && userPosition !== null && map !== null) {
-      shouldFlyToUserRef.current = false;
-      map.flyTo([userPosition.lat, userPosition.lng], LOCATE_ZOOM);
-    }
-  }, [userPosition, map]);
-
-  const handleLocateClick = () => {
-    setHasPressedLocate(true);
-    if (userPosition !== null && map !== null) {
-      map.flyTo([userPosition.lat, userPosition.lng], LOCATE_ZOOM);
-    } else {
-      shouldFlyToUserRef.current = true;
-    }
-    onLocate();
-  };
-
-  const isLocating = locationStatus === "locating";
-  const locateError =
-    hasPressedLocate && locationStatus === "denied"
-      ? LOCATION_DENIED_MESSAGE
-      : hasPressedLocate && locationStatus === "unavailable"
-        ? LOCATION_UNAVAILABLE_MESSAGE
-        : null;
-
   const route = routeState.status === "ready" ? routeState.route : null;
   const routeSummary = summarizeRouteState(routeState);
 
   return (
-    <div
-      className={
-        theme === "dark"
-          ? "fuel-map-wrapper fuel-map-wrapper--dark"
-          : "fuel-map-wrapper"
-      }
-      role="region"
-      aria-label="Carte des stations-service"
+    <MapShell
+      ariaLabel="Carte des stations-service"
+      initialView={initialView}
+      userPosition={userPosition}
+      locationStatus={locationStatus}
+      route={route}
+      onViewportChange={onViewportChange}
+      onLocate={onLocate}
     >
-      <MapContainer
-        ref={setMap}
-        className="fuel-map"
-        center={[initialView.lat, initialView.lng]}
-        zoom={initialView.zoom}
-        minZoom={MAP_MIN_ZOOM}
-        maxZoom={MAP_MAX_ZOOM}
-      >
-        <TileLayer
-          url={TILE_URL}
-          attribution={TILE_ATTRIBUTION}
-          maxZoom={MAP_MAX_ZOOM}
-        />
-        <ViewportReporter onViewportChange={onViewportChange} />
-        <RouteLayer userPosition={userPosition} route={route} />
-        {displayedStations.map((displayedStation) => {
-          const isSelected = displayedStation.station.id === selectedStationId;
-          return (
-            <StationMarker
-              key={displayedStation.station.id}
-              displayedStation={displayedStation}
-              fuel={fuel}
-              now={now}
-              isSelected={isSelected}
-              routeSummary={isSelected ? routeSummary : null}
-              onSelectStation={onSelectStation}
-              onDeselectStation={onDeselectStation}
-            />
-          );
-        })}
-      </MapContainer>
-
-      <div className="fuel-map-controls">
-        {locateError !== null && (
-          <p className="fuel-map-controls__error" role="alert">
-            {locateError}
-          </p>
-        )}
-        <button
-          type="button"
-          className="fuel-map-controls__locate"
-          onClick={handleLocateClick}
-          disabled={map === null || isLocating}
-          aria-label={isLocating ? "Localisation en cours" : "Me localiser"}
-          title="Me localiser"
-        >
-          {isLocating ? (
-            <LoaderCircle
-              className="fuel-map-controls__spinner"
-              size={22}
-              aria-hidden="true"
-            />
-          ) : (
-            <LocateFixed size={22} aria-hidden="true" />
-          )}
-        </button>
-      </div>
-    </div>
+      {displayedStations.map((displayedStation) => {
+        const isSelected = displayedStation.station.id === selectedStationId;
+        return (
+          <StationMarker
+            key={displayedStation.station.id}
+            displayedStation={displayedStation}
+            fuel={fuel}
+            now={now}
+            isSelected={isSelected}
+            routeSummary={isSelected ? routeSummary : null}
+            onSelectStation={onSelectStation}
+            onDeselectStation={onDeselectStation}
+          />
+        );
+      })}
+    </MapShell>
   );
 };

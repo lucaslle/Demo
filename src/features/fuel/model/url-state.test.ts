@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { buildFuelSearch, DEFAULT_VIEW, parseFuelUrlState } from "./url-state";
+import { DEFAULT_VIEW } from "@/features/map/model/map-view-url";
+import { buildFuelSearch, parseFuelUrlState } from "./url-state";
 
 const parse = (search: string) =>
   parseFuelUrlState(new URLSearchParams(search));

@@ -1,4 +1,4 @@
-import { isPositionInBounds, type Bounds } from "./bounds";
+import { isPositionInBounds, type Bounds } from "@/features/map/model/bounds";
 import type { FuelType } from "./fuel-types";
 import { getPriceRange, getPriceTier, type PriceTier } from "./price-tier";
 import type { FuelPrice, Station } from "./station";

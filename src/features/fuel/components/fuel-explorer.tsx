@@ -17,7 +17,7 @@ import {
 import { buildDisplayedStations } from "../model/displayed-station";
 import { FUEL_LABELS, type FuelType } from "../model/fuel-types";
 import { summarizePrices } from "../model/price-summary";
-import type { Viewport } from "../model/viewport";
+import type { Viewport } from "@/features/map/model/viewport";
 import { BestPriceCard } from "./best-price-card";
 import styles from "./fuel-explorer.module.css";
 import { FuelChips } from "./fuel-chips";
